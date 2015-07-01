@@ -71,7 +71,7 @@ public class BNetProtocol implements Runnable {
         p = new BNetProtocolPacket(BNetProtocolPacketId.SID_AUTH_INFO);
         p.writeDWord(0);
         p.writeDWord(0x49583836); // Platform IX86
-        p.writeDWord(0x57335850); // Warcraft III
+        p.writeDWord(0x44534852); // Warcraft III
         p.writeDWord(0x00000000); // Version byte
         p.writeDWord("koKR");
         p.writeDWord(0); // Local IP
@@ -138,8 +138,8 @@ public class BNetProtocol implements Runnable {
 
                     BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_AUTH_CHECK);
                     p.writeDWord(clientToken);  // Client Token
-                    p.writeDWord(0x1015019c);   // EXE Version
-                    p.writeDWord(0x1b375294);   // EXE Hash
+                    p.writeDWord(0);   // EXE Version
+                    p.writeDWord(0);   // EXE Hash
                     p.writeDWord(1);            // Number of CD-Keys
                     p.writeDWord(0);            // Spawn CD-Key
                     p.writeDWord(0x00000000);
@@ -274,7 +274,7 @@ public class BNetProtocol implements Runnable {
             switch (pr.packetId) {
                 case SID_CHATEVENT: {
                     BNetChatEventId eid = BNetChatEventId.values()[is.readDWord()];
-                    Log.d("EID", String.valueOf(eid));
+
                     int flags = is.readDWord();
                     int ping = is.readDWord();
                     is.skip(12);
@@ -284,14 +284,37 @@ public class BNetProtocol implements Runnable {
                     StatString statstr = null;
 
                     switch (eid) {
-                        case EID_TALK: {
+                        case EID_ERROR:
+                        case EID_INFO: {
                             String message = is.readNTString();
-                            System.out.println(message);
                             if(mBNetProtocolInterface != null) {
                                 this.mBNetProtocolInterface.receiveMessage(message);
                             }
                             break;
                         }
+                        case EID_WHISPER:
+                        case EID_TALK: {
+                            String message = is.readNTString();
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.receiveMessage(username+": "+message);
+                            }
+                            break;
+                        }
+                        case EID_JOIN: {
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.receiveMessage(username + "님이 입장하셨습니다.");
+                            }
+                            break;
+                        }
+                        case EID_LEAVE: {
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.receiveMessage(username + "님이 퇴장하셨습니다.");
+                            }
+                            break;
+                        }
+                        default:
+                            Log.d("EID", String.valueOf(eid));
+                            break;
 
                     }
                 }
