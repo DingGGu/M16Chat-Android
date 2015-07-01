@@ -33,6 +33,7 @@
             android:hint="비밀번호" />
 
         <Button
+            android:id="@+id/login_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="로그인" />
