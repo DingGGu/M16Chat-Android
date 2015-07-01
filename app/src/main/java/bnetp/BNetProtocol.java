@@ -1,5 +1,7 @@
 package bnetp;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.DataOutputStream;
@@ -14,6 +16,8 @@ import bnetp.util.StatString;
 
 public class BNetProtocol implements Runnable {
 
+    public Handler ChatHandler;
+
     private String username, password;
 
     protected Socket socket = null;
@@ -22,6 +26,8 @@ public class BNetProtocol implements Runnable {
 
     private int serverToken = 0;
     private final int clientToken = Math.abs(new Random().nextInt());
+
+    private BNetProtocolInterface mBNetProtocolInterface = null;
 
     private Integer nlsRevision = null;
 
@@ -33,6 +39,10 @@ public class BNetProtocol implements Runnable {
         s = new Socket(addr, port);
         s.setKeepAlive(true);
         return s;
+    }
+
+    public void setBnetProtocolInterface(BNetProtocolInterface bnetProtocolInterface) {
+        this.mBNetProtocolInterface = bnetProtocolInterface;
     }
 
     public BNetProtocol(String username, String password) {
@@ -264,25 +274,22 @@ public class BNetProtocol implements Runnable {
             switch (pr.packetId) {
                 case SID_CHATEVENT: {
                     BNetChatEventId eid = BNetChatEventId.values()[is.readDWord()];
+                    Log.d("EID", String.valueOf(eid));
                     int flags = is.readDWord();
                     int ping = is.readDWord();
                     is.skip(12);
                     String username = is.readNTString();
+
                     ByteArray data = null;
                     StatString statstr = null;
 
-                    System.out.println(username+":");
-
                     switch (eid) {
-                        case EID_SHOWUSER:
-                        case EID_USERFLAGS:
-                        case EID_JOIN:
-                        case EID_LEAVE:
-                        case EID_TALK:
-                        case EID_EMOTE:
-                        case EID_WHISPERSENT:
-                        case EID_WHISPER: {
-                            System.out.println(is.readNTString());
+                        case EID_TALK: {
+                            String message = is.readNTString();
+                            System.out.println(message);
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.receiveMessage(message);
+                            }
                             break;
                         }
 
@@ -319,6 +326,7 @@ public class BNetProtocol implements Runnable {
             try {
                 BNetConnect();
                 BNetLogin();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -41,8 +41,8 @@ public class BNetOutputStream extends DataOutputStream {
 
     public void writeNTString(byte[] str) throws IOException {
         for(byte b : str) {
-//            if(b == 0)
-//                throw new IOException("String contains a null character:\n" + HexDump.hexDump(str));
+            if(b == 0)
+                throw new IOException("String contains a null character:\n");
             writeByte(b);
         }
         writeByte(0);

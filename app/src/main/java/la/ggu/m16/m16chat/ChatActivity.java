@@ -3,6 +3,7 @@ package la.ggu.m16.m16chat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -30,7 +31,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     private Thread ChatThread = null;
     private BNetProtocol BNetProtocol = null;
-    private Handler BACK_PRESSED_HANDLER;
+
+    private Handler mChatHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         ChatAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ChatItems);
         chat_view.setAdapter(ChatAdapter);
 
-
         chat_edittext = (EditText) findViewById(R.id.chat_edittext);
         chat_submit = (Button) findViewById(R.id.chat_submit);
         chat_submit.setOnClickListener(this);
@@ -50,6 +51,21 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         String login_username = intent.getStringExtra("login_username");
         String login_password = intent.getStringExtra("login_password");
         BNetProtocol = new BNetProtocol(login_username, login_password);
+        BNetProtocol.setBnetProtocolInterface(new BNetProtocolInterface() {
+            @Override
+            public void receiveMessage(final String message) {
+                mChatHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(ChatItems != null && ChatAdapter != null) {
+                            ChatItems.add(message);
+                            ChatAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+        });
+
         ChatThread = new Thread(BNetProtocol);
         ChatThread.start();
 
@@ -70,7 +86,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_clear) {
+            ChatItems.clear();
+            ChatAdapter.notifyDataSetChanged();
             return true;
         }
 
@@ -79,7 +97,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == chat_submit.getId()) {
+        if (v.getId() == chat_submit.getId()) {
             String message = chat_edittext.getText().toString();
             BNetProtocol.sendChatCommand(message);
             chat_edittext.setText("");
