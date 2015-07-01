@@ -32,7 +32,10 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(LoginActivity.this, "아이디 비밀번호를 입력하지 않았어요.", Toast.LENGTH_SHORT).show();
             } else {
-                startActivity(new Intent(this, ChatActivity.class));
+                Intent intent = new Intent(this, ChatActivity.class);
+                intent.putExtra("login_username", username);
+                intent.putExtra("login_password", password);
+                startActivity(intent);
             }
         }
     }

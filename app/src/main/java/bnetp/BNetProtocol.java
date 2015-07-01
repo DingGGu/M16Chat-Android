@@ -1,5 +1,7 @@
 package bnetp;
 
+import android.util.Log;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
@@ -10,7 +12,9 @@ import bnetp.Hash.*;
 import bnetp.util.ByteArray;
 import bnetp.util.StatString;
 
-public class BNetProtocol {
+public class BNetProtocol implements Runnable {
+
+    private String username, password;
 
     protected Socket socket = null;
     private BNetInputStream BNInputStream = null;
@@ -31,7 +35,9 @@ public class BNetProtocol {
         return s;
     }
 
-    public BNetProtocol() {
+    public BNetProtocol(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public void BNetConnect() throws Exception {
@@ -155,15 +161,15 @@ public class BNetProtocol {
                                 default:
                                     System.out.println("Unknown Error" + Integer.toHexString(result));
                                     break;
-                                //todo: disconnect socket
                             }
+                            disconnect();
                             System.out.println("Disconnect!" + extraInfo);
                             break;
                         }
                         System.out.println("Passed Check Revision");
                     } else {
                         if (result != 2) {
-                            //todo: disconnect socket
+                            disconnect();
                             System.out.println("Failed Version Check!");
                             break;
                         }
@@ -182,19 +188,19 @@ public class BNetProtocol {
                             sendJoinChannelFirst();
                             break;
                         case 0x01:
-                            //todo: disconnect socket
+                            disconnect();
                             System.out.println("Account does not Exist");
                             break;
                         case 0x02:
-                            //todo: disconnect socket
+                            disconnect();
                             System.out.println("Incorrect password.");
                             break;
                         case 0x06: // Account is closed
-                            //todo: disconnect socket
+                            disconnect();
                             System.out.println("Your account is locked.");
                             break;
                         default:
-                            //todo: disconnect socket
+                            disconnect();
                             System.out.println("Unknown ERROR.");
                             break;
                     }
@@ -211,8 +217,8 @@ public class BNetProtocol {
     }
 
     public void sendAuth() throws Exception {
-        String username = "Q";
-        String password = "1234";
+        String username = this.username;
+        String password = this.password;
         int passwordHash[] = DoubleHash.doubleHash(password.toLowerCase(), clientToken, serverToken);
 
         BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_LOGONRESPONSE2);
@@ -282,6 +288,39 @@ public class BNetProtocol {
 
                     }
                 }
+            }
+        }
+    }
+
+    public void sendChatCommand (String data) {
+        try {
+            BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CHATCOMMAND);
+            p.writeNTString(data);
+            p.sendPacket(BNetOutputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect() {
+        try {
+            if (socket != null) {
+                socket.close();
+                socket = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                BNetConnect();
+                BNetLogin();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
