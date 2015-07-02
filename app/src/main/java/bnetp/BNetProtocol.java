@@ -299,7 +299,8 @@ public class BNetProtocol extends Thread implements Runnable {
                         case EID_TALK: {
                             String message = is.readNTString();
                             if(mBNetProtocolInterface != null) {
-                                this.mBNetProtocolInterface.receiveMessage(username+": "+message);
+                                mBNetChatMessage = new BNetChatMessage(username, message);
+                                this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
                             break;
                         }

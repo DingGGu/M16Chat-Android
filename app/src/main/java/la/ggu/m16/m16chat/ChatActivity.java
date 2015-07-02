@@ -3,7 +3,6 @@ package la.ggu.m16.m16chat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -11,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,12 +19,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import bnetp.*;
+import la.ggu.m16.m16chat.cv.ChatAdapter;
 
 public class ChatActivity extends ActionBarActivity implements View.OnClickListener {
 
     private ListView chat_view;
-    private ArrayList<String> ChatItems = new ArrayList<String>();
-    private ArrayAdapter<String> ChatAdapter;
+    private ArrayList<BNetChatMessage> ChatItems = new ArrayList<BNetChatMessage>();
+    private ChatAdapter ChatAdapter;
     private EditText chat_edittext;
     private Button chat_submit;
 
@@ -44,7 +43,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         setContentView(R.layout.activity_chat);
 
         chat_view = (ListView) findViewById(R.id.chat_view);
-        ChatAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, ChatItems);
+        ChatAdapter = new ChatAdapter(this, R.layout.custom_chat, ChatItems);
         chat_view.setAdapter(ChatAdapter);
 
         chat_edittext = (EditText) findViewById(R.id.chat_edittext);
@@ -70,15 +69,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         BNetProtocol.setBnetProtocolInterface(new BNetProtocolInterface() {
             @Override
             public void receiveMessage(final String message) {
-                mChatHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(ChatItems != null && ChatAdapter != null) {
-                            ChatItems.add(message);
-                            ChatAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
+
             }
 
             @Override
@@ -87,7 +78,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         if(ChatItems != null && ChatAdapter != null) {
-                            ChatItems.add(obj.message);
+                            ChatItems.add(obj);
                             ChatAdapter.notifyDataSetChanged();
                         }
                     }
@@ -141,7 +132,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         String message = chat_edittext.getText().toString();
         BNetProtocol.sendChatCommand(message);
         chat_edittext.setText("");
-        ChatItems.add(message);
+        String username = "test";
+        BNetChatMessage mBNetChatMessage = new BNetChatMessage(username, message);
+        ChatItems.add(mBNetChatMessage);
         ChatAdapter.notifyDataSetChanged();
     }
 
