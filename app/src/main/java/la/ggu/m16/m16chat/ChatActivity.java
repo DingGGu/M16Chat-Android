@@ -3,6 +3,7 @@ package la.ggu.m16.m16chat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -14,19 +15,26 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Objects;
 
 import bnetp.*;
+import la.ggu.m16.m16chat.cv.ChanAdapter;
 import la.ggu.m16.m16chat.cv.ChatAdapter;
 
 public class ChatActivity extends ActionBarActivity implements View.OnClickListener {
 
+    private DrawerLayout chat_activity;
+    private RelativeLayout chat_drawer;
+    private ListView channel_user_list;
     private ArrayList<BNetChannelUser> ChanUsers = new ArrayList<BNetChannelUser>();
+    private ChanAdapter ChanAdapter;
 
     private ListView chat_view;
     private ArrayList<BNetChatMessage> ChatItems = new ArrayList<BNetChatMessage>();
@@ -41,12 +49,20 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private BNetProtocol BNetProtocol = null;
 
     private Handler mChatHandler = new Handler();
+    private Handler mChannelUserHandler = new Handler();
     private Handler BackPressedHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        chat_activity = (DrawerLayout) findViewById(R.id.chat_activity);
+        chat_drawer = (RelativeLayout) findViewById(R.id.chat_drawer);
+
+        channel_user_list = (ListView) findViewById(R.id.channel_user_list);
+        ChanAdapter = new ChanAdapter(this, R.id.channel_user_list_item, ChanUsers);
+        channel_user_list.setAdapter(ChanAdapter);
 
         chat_view = (ListView) findViewById(R.id.chat_view);
         ChatAdapter = new ChatAdapter(this, R.layout.custom_chat, ChatItems);
@@ -79,6 +95,55 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         BNetProtocol = new BNetProtocol(login_username, login_password);
         BNetProtocol.setBnetProtocolInterface(new BNetProtocolInterface() {
             @Override
+            public void addChannelUser(final BNetChannelUser obj) {
+                mChannelUserHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ChanUsers != null && ChanAdapter != null) {
+                            ChanUsers.add(obj);
+                            ChanAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void delChannelUser(final BNetChannelUser obj) {
+                mChannelUserHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ChanUsers != null && ChanAdapter != null) {
+                            ChanUsers.remove(obj);
+                            ChanAdapter.notifyDataSetChanged();
+
+
+//                                Iterator<BNetChannelUser> it = ChanUsers.iterator();
+//                                while (it.hasNext()) {
+//                                    BNetChannelUser cu = it.next();
+//                                    if (cu.username.equals(obj.username)) {
+//                                        ChanUsers.remove(cu);
+//                                        ChanAdapter.notifyDataSetChanged();
+//                                    }
+//                                }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void clearChannelUser() {
+                mChannelUserHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ChanUsers != null && ChanAdapter != null) {
+                            ChanUsers.clear();
+                            ChanAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+
+            @Override
             public void receiveMessage(final String message) {
 
             }
@@ -88,7 +153,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                 mChatHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if(ChatItems != null && ChatAdapter != null) {
+                        if (ChatItems != null && ChatAdapter != null) {
                             ChatItems.add(obj);
                             ChatAdapter.notifyDataSetChanged();
                         }
@@ -101,11 +166,24 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                 ChatThread.interrupt();
                 finish();
             }
+
+
         });
 
         ChatThread = new Thread(BNetProtocol);
         ChatThread.start();
+    }
 
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean drawerOpen = chat_activity.isDrawerOpen(chat_drawer);
+//        if(!drawerOpen) {
+//            chat_activity.openDrawer(chat_drawer);
+//        } else {
+//            chat_activity.closeDrawer(chat_drawer);
+//        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -157,14 +235,17 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         }
         BNetProtocol.sendChatCommand(message);
         chat_edittext.setText("");
-        String username = "test";
-        BNetChatMessage mBNetChatMessage = new BNetChatMessage(username, message);
+        BNetChatMessage mBNetChatMessage = new BNetChatMessage(BNetProtocol.getUsername(), message);
         ChatItems.add(mBNetChatMessage);
         ChatAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onBackPressed() {
+        if (chat_activity.isDrawerOpen(chat_drawer)) {
+            chat_activity.closeDrawer(chat_drawer);
+            return;
+        }
         Toast.makeText(this, "한번 더 누르면 종료해요.", Toast.LENGTH_SHORT).show();
         BACK_PRESSED_NUM++;
         BackPressedHandler.postDelayed(new Runnable() {

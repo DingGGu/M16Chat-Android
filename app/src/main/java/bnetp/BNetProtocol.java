@@ -22,6 +22,7 @@ public class BNetProtocol extends Thread implements Runnable {
     private BNetInputStream BNInputStream = null;
     private DataOutputStream BNetOutputStream = null;
 
+    private BNetChannelUser mBNetChannelUser = null;
     private BNetChatMessage mBNetChatMessage = null;
 
     private int serverToken = 0;
@@ -32,6 +33,8 @@ public class BNetProtocol extends Thread implements Runnable {
     private Integer nlsRevision = null;
 
     private SRP srp = null;
+
+    private String uniqueUserName;
 
     protected Socket makeSocket(String address, int port) throws UnknownHostException, IOException {
         Socket s;
@@ -205,23 +208,28 @@ public class BNetProtocol extends Thread implements Runnable {
                             break;
                         case 0x02:
                             disconnect();
-                            System.out.println("Incorrect password.");
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.throwError("비밀번호가 틀렸어요.");
+                            }
                             break;
-                        case 0x06: // Account is closed
+                        case 0x06:
                             disconnect();
-                            System.out.println("Your account is locked.");
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.throwError("아이디가 잠겨있어요.");
+                            }
                             break;
                         default:
                             disconnect();
-                            System.out.println("Unknown ERROR.");
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.throwError("알 수 없는 오류.");
+                            }
                             break;
                     }
                     break;
                 }
 
                 case SID_ENTERCHAT: {
-                    String uniqueUserName = is.readNTString();
-
+                    uniqueUserName = is.readNTString();
                     BNetChat();
                 }
             }
@@ -286,6 +294,20 @@ public class BNetProtocol extends Thread implements Runnable {
                     StatString statstr = null;
 
                     switch (eid) {
+                        case EID_CHANNEL:{
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.clearChannelUser();
+                            }
+                            break;
+                        }
+                        case EID_SHOWUSER:{
+                            if(mBNetProtocolInterface != null) {
+                                mBNetChannelUser = new BNetChannelUser(username);
+                                this.mBNetProtocolInterface.addChannelUser(mBNetChannelUser);
+                            }
+                            break;
+                        }
+
                         case EID_ERROR:
                         case EID_INFO: {
                             String message = is.readNTString();
@@ -306,18 +328,20 @@ public class BNetProtocol extends Thread implements Runnable {
                         }
                         case EID_JOIN: {
                             if(mBNetProtocolInterface != null) {
-                                this.mBNetProtocolInterface.receiveMessage(username + "님이 입장하셨습니다.");
+                                mBNetChannelUser = new BNetChannelUser(username);
+                                this.mBNetProtocolInterface.addChannelUser(mBNetChannelUser);
                             }
                             break;
                         }
                         case EID_LEAVE: {
                             if(mBNetProtocolInterface != null) {
-                                this.mBNetProtocolInterface.receiveMessage(username + "님이 퇴장하셨습니다.");
+                                mBNetChannelUser = new BNetChannelUser(username);
+                                this.mBNetProtocolInterface.delChannelUser(mBNetChannelUser);
                             }
                             break;
                         }
                         default:
-                            Log.d("EID", String.valueOf(eid));
+                            Log.e("EID", String.valueOf(eid));
                             break;
 
                     }
@@ -334,6 +358,10 @@ public class BNetProtocol extends Thread implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getUsername () {
+        return this.uniqueUserName;
     }
 
     public void disconnect() {
