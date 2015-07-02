@@ -21,6 +21,14 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
+        <Spinner
+            android:id="@+id/chat_spinner"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_weight="20"
+            android:gravity="center"/>
+
         <EditText
             android:id="@+id/chat_edittext"
             android:layout_width="0dp"

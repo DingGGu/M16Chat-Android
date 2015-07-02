@@ -10,9 +10,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private ListView chat_view;
     private ArrayList<BNetChatMessage> ChatItems = new ArrayList<BNetChatMessage>();
     private ChatAdapter ChatAdapter;
+    private Spinner chat_spinner;
     private EditText chat_edittext;
     private Button chat_submit;
 
@@ -45,6 +49,11 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         chat_view = (ListView) findViewById(R.id.chat_view);
         ChatAdapter = new ChatAdapter(this, R.layout.custom_chat, ChatItems);
         chat_view.setAdapter(ChatAdapter);
+
+        chat_spinner = (Spinner) findViewById(R.id.chat_spinner);
+        chat_spinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
+                getResources().getStringArray(R.array.CHAT_SPINNER_ITEMS)));
+        chat_spinner.setSelection(2);
 
         chat_edittext = (EditText) findViewById(R.id.chat_edittext);
         chat_submit = (Button) findViewById(R.id.chat_submit);
@@ -130,6 +139,20 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     public void chatSendMessage() {
         String message = chat_edittext.getText().toString();
+        switch(chat_spinner.getSelectedItemPosition()) {
+            case 0:
+                message = "/c m "+message;
+                break;
+            case 1:
+                message = "/f m "+message;
+                break;
+            case 2:
+                break;
+            case 3:
+                message = "/"+message;
+                chat_spinner.setSelection(2);
+                break;
+        }
         BNetProtocol.sendChatCommand(message);
         chat_edittext.setText("");
         String username = "test";
