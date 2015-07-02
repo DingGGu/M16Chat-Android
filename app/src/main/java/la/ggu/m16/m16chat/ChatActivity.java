@@ -36,6 +36,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private BNetProtocol BNetProtocol = null;
 
     private Handler mChatHandler = new Handler();
+    private Handler BackPressedHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +134,16 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-
+        Toast.makeText(this, "한번 더 누르면 종료해요.", Toast.LENGTH_SHORT).show();
+        BACK_PRESSED_NUM++;
+        BackPressedHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                BACK_PRESSED_NUM = 0;
+            }
+        }, 2000);
+        if (BACK_PRESSED_NUM == 2) {
+            super.onBackPressed();
+        }
     }
 }
