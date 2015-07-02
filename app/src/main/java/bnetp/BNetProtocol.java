@@ -22,6 +22,8 @@ public class BNetProtocol extends Thread implements Runnable {
     private BNetInputStream BNInputStream = null;
     private DataOutputStream BNetOutputStream = null;
 
+    private BNetChatMessage mBNetChatMessage = null;
+
     private int serverToken = 0;
     private final int clientToken = Math.abs(new Random().nextInt());
 
@@ -70,7 +72,7 @@ public class BNetProtocol extends Thread implements Runnable {
         p.writeDWord(0);
         p.writeDWord(0x49583836); // Platform IX86
         p.writeDWord(0x44534852); // Warcraft III
-        p.writeDWord(0x00000000); // Version byte
+        p.writeDWord(0x00000001); // Version byte
         p.writeDWord("koKR");
         p.writeDWord(0); // Local IP
         p.writeDWord(tzBias); // TZ bias
@@ -288,7 +290,8 @@ public class BNetProtocol extends Thread implements Runnable {
                         case EID_INFO: {
                             String message = is.readNTString();
                             if(mBNetProtocolInterface != null) {
-                                this.mBNetProtocolInterface.receiveMessage(message);
+                                mBNetChatMessage = new BNetChatMessage(username, message);
+                                this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
                             break;
                         }

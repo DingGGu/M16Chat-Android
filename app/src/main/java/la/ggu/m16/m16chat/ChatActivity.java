@@ -82,6 +82,19 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             }
 
             @Override
+            public void receiveMessage(final BNetChatMessage obj) {
+                mChatHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(ChatItems != null && ChatAdapter != null) {
+                            ChatItems.add(obj.message);
+                            ChatAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+
+            @Override
             public void throwError(final String s) {
                 ChatThread.interrupt();
                 finish();
@@ -143,6 +156,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             }
         }, 2000);
         if (BACK_PRESSED_NUM == 2) {
+            ChatThread.interrupt();
             super.onBackPressed();
         }
     }
