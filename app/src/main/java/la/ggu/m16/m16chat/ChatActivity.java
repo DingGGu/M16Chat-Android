@@ -26,6 +26,8 @@ import la.ggu.m16.m16chat.cv.ChatAdapter;
 
 public class ChatActivity extends ActionBarActivity implements View.OnClickListener {
 
+    private ArrayList<BNetChannelUser> ChanUsers = new ArrayList<BNetChannelUser>();
+
     private ListView chat_view;
     private ArrayList<BNetChatMessage> ChatItems = new ArrayList<BNetChatMessage>();
     private ChatAdapter ChatAdapter;
