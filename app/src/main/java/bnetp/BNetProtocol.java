@@ -14,9 +14,7 @@ import bnetp.Hash.*;
 import bnetp.util.ByteArray;
 import bnetp.util.StatString;
 
-public class BNetProtocol implements Runnable {
-
-    public Handler ChatHandler;
+public class BNetProtocol extends Thread implements Runnable {
 
     private String username, password;
 
@@ -199,7 +197,9 @@ public class BNetProtocol implements Runnable {
                             break;
                         case 0x01:
                             disconnect();
-                            System.out.println("Account does not Exist");
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.throwError("올바르지 않은 아이디에요.");
+                            }
                             break;
                         case 0x02:
                             disconnect();
@@ -338,6 +338,7 @@ public class BNetProtocol implements Runnable {
                 socket.close();
                 socket = null;
             }
+            InterruptThread();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -349,10 +350,13 @@ public class BNetProtocol implements Runnable {
             try {
                 BNetConnect();
                 BNetLogin();
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void InterruptThread() {
+        this.interrupt();
     }
 }

@@ -6,13 +6,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -47,6 +50,18 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         chat_submit = (Button) findViewById(R.id.chat_submit);
         chat_submit.setOnClickListener(this);
 
+        chat_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    chatSendMessage();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
         Intent intent = getIntent();
         String login_username = intent.getStringExtra("login_username");
         String login_password = intent.getStringExtra("login_password");
@@ -63,6 +78,12 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         }
                     }
                 });
+            }
+
+            @Override
+            public void throwError(final String s) {
+                ChatThread.interrupt();
+                finish();
             }
         });
 
@@ -98,12 +119,16 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getId() == chat_submit.getId()) {
-            String message = chat_edittext.getText().toString();
-            BNetProtocol.sendChatCommand(message);
-            chat_edittext.setText("");
-            ChatItems.add(message);
-            ChatAdapter.notifyDataSetChanged();
+            chatSendMessage();
         }
+    }
+
+    public void chatSendMessage() {
+        String message = chat_edittext.getText().toString();
+        BNetProtocol.sendChatCommand(message);
+        chat_edittext.setText("");
+        ChatItems.add(message);
+        ChatAdapter.notifyDataSetChanged();
     }
 
     @Override
