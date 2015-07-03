@@ -1,7 +1,7 @@
 package la.ggu.m16.m16chat;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,7 +14,7 @@ import android.widget.Toast;
 import la.ggu.m16.m16chat.util.PreferencesControl;
 
 
-public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
+public class LoginActivity extends Activity implements View.OnClickListener {
     private EditText login_username, login_password;
     private Button login_submit;
 

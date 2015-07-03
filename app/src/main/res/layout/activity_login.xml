@@ -3,7 +3,9 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".LoginActivity">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@color/bg_main"
+    tools:context=".LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,17 +13,31 @@
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:src="@drawable/logo"
+            />
+
         <TextView
             android:text="M16 Android Chat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" />
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:layout_marginBottom="10dp" />
 
         <EditText
             android:id="@+id/login_username"
             android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:textColorHint="@color/hint"
+            android:padding="10dp"
+            android:layout_marginBottom="5dp"
             android:imeOptions="actionNext"
             android:hint="아이디" />
 
@@ -31,6 +47,10 @@
             android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:textColorHint="@color/hint"
+            android:padding="10dp"
+            android:layout_marginBottom="5dp"
             android:imeOptions="actionDone"
             android:hint="비밀번호" />
 
@@ -38,6 +58,8 @@
             android:id="@+id/login_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/login_submit_border"
+            android:textColor="@color/white"
             android:text="로그인" />
 
     </LinearLayout>

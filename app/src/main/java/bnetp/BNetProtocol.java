@@ -75,7 +75,7 @@ public class BNetProtocol extends Thread implements Runnable {
         p.writeDWord(0);
         p.writeDWord(0x49583836); // Platform IX86
         p.writeDWord(0x44534852); // Warcraft III
-        p.writeDWord(0x00000001); // Version byte
+        p.writeDWord(0x00000000); // Version byte
         p.writeDWord("koKR");
         p.writeDWord(0); // Local IP
         p.writeDWord(tzBias); // TZ bias
@@ -266,7 +266,7 @@ public class BNetProtocol extends Thread implements Runnable {
     public void sendJoinChannelFirst() throws Exception {
         BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_JOINCHANNEL);
         p.writeDWord(1);
-        p.writeNTString("W3");
+        p.writeNTString("Android");
         p.sendPacket(BNetOutputStream);
     }
 
