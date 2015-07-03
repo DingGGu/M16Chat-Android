@@ -78,7 +78,16 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
                     mChatMessage.setText(bcm.message);
                     break;
                 }
-                case EID_WHISPERSENT:
+                case EID_WHISPERSENT: {
+                    v = vi.inflate(R.layout.custom_chat, null);
+                    v.setBackgroundColor(0xffFFE5F6);
+                    TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);
+                    TextView mChatMessage = (TextView) v.findViewById(R.id.chat_message);
+                    mChatUserName.setTextColor(0xffFF34F1);
+                    mChatUserName.setText("[보냄] "+bcm.username);
+                    mChatMessage.setText(bcm.message);
+                    break;
+                }
                 case EID_WHISPER: {
                     v = vi.inflate(R.layout.custom_chat, null);
                     v.setBackgroundColor(0xffFFE5F6);
