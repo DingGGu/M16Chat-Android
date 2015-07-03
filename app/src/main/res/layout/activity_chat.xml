@@ -7,48 +7,55 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
         tools:context="la.ggu.m16.m16chat.ChatActivity">
 
         <ListView
             android:id="@+id/chat_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="55dp"
             android:transcriptMode="alwaysScroll" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="56dp"
+            android:background="@drawable/chat_border_top"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:padding="6dp"
             android:orientation="horizontal">
 
             <Spinner
                 android:id="@+id/chat_spinner"
                 android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center"
-                android:layout_weight="20"
+                android:layout_height="35dp"
+                android:layout_gravity="center_vertical|center"
+                android:layout_weight="15"
+                android:textColor="@color/white"
+                android:background="@drawable/chat_spinner"
                 android:gravity="center" />
 
             <EditText
                 android:id="@+id/chat_edittext"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="60"
+                android:layout_weight="70"
                 android:imeOptions="actionSend|flagNoExtractUi"
                 android:inputType="text"
+                android:background="@color/white"
+                android:paddingLeft="8dp"
+                android:paddingRight="4dp"
                 android:singleLine="true" />
 
             <Button
                 android:id="@+id/chat_submit"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="20"
+                android:layout_weight="15"
+                android:textColor="@color/white"
+                android:background="@color/bg_main"
                 android:text="전송" />
-
         </LinearLayout>
     </RelativeLayout>
 

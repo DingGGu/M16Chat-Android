@@ -3,6 +3,8 @@ package la.ggu.m16.m16chat;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,6 +24,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        TextView text_go_homepage = (TextView) findViewById(R.id.text_go_homepage);
+        text_go_homepage.setText(Html.fromHtml("<a href=\"https://m16.ggu.la\">M16 홈페이지</a> "));
+        text_go_homepage.setMovementMethod(LinkMovementMethod.getInstance());
 
         login_username = (EditText) findViewById(R.id.login_username);
         login_password = (EditText) findViewById(R.id.login_password);

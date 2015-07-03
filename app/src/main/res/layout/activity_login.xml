@@ -17,8 +17,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_gravity="center"
-            android:src="@drawable/logo"
-            />
+            android:src="@drawable/logo" />
 
         <TextView
             android:text="M16 Android Chat"
@@ -60,7 +59,19 @@
             android:layout_height="wrap_content"
             android:background="@drawable/login_submit_border"
             android:textColor="@color/white"
+            android:textSize="18sp"
             android:text="로그인" />
+
+        <TextView
+            android:id="@+id/text_go_homepage"
+            android:text="M16 홈페이지"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textColorLink="@color/white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="80dp" />
 
     </LinearLayout>
 </RelativeLayout>
