@@ -1,8 +1,12 @@
 package la.ggu.m16.m16chat;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -49,6 +53,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private static int BACK_PRESSED_NUM;
     private int ChannelUsersNum;
     private String ChannelName;
+    private String uniqueUserName;
 
     private Thread ChatThread = null;
     private BNetProtocol BNetProtocol = null;
@@ -57,6 +62,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private Handler mChannelUserHandler = new Handler();
     private Handler BackPressedHandler = new Handler();
 
+    private NotificationManager mNotificationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +71,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         chat_activity = (DrawerLayout) findViewById(R.id.chat_activity);
         chat_drawer = (RelativeLayout) findViewById(R.id.chat_drawer);
@@ -102,6 +110,10 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         String login_password = intent.getStringExtra("login_password");
         BNetProtocol = new BNetProtocol(login_username, login_password);
         BNetProtocol.setBnetProtocolInterface(new BNetProtocolInterface() {
+            @Override
+            public void initUserInfo(final String un) {
+                uniqueUserName = un;
+            }
             @Override
             public void addChannelUser(final BNetChannelUser obj) {
                 mChannelUserHandler.post(new Runnable() {
@@ -164,6 +176,18 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         if (ChatItems != null && ChatAdapter != null) {
+//                            if(obj.message.toLowerCase().contains(uniqueUserName.toLowerCase())) { //알림
+//                                PendingIntent pendingintent = PendingIntent.getActivity(ChatActivity.this, 0, new Intent(ChatActivity.this, ChatActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//                                NotificationCompat.Builder mBuilder =
+//                                        new NotificationCompat.Builder(ChatActivity.this)
+//                                                .setSmallIcon(R.drawable.ic_m16_chat)
+//                                                .setContentTitle(obj.username)
+//                                                .setContentText(obj.message)
+//                                                .setContentIntent(pendingintent);
+//                                mNotificationManager.notify(0, mBuilder.build());
+//                            }
+
                             ChatItems.add(obj);
                             ChatAdapter.notifyDataSetChanged();
                         }

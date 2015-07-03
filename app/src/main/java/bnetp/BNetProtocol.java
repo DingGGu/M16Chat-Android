@@ -229,7 +229,10 @@ public class BNetProtocol extends Thread implements Runnable {
                 }
 
                 case SID_ENTERCHAT: {
-                    uniqueUserName = is.readNTString();
+                    if(mBNetProtocolInterface != null) {
+                        uniqueUserName = is.readNTString();
+                        this.mBNetProtocolInterface.initUserInfo(uniqueUserName);
+                    }
                     BNetChat();
                 }
             }
