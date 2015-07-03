@@ -69,8 +69,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         chat_activity = (DrawerLayout) findViewById(R.id.chat_activity);
@@ -165,6 +163,10 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                             setTitle();
                             ChanUsers.clear();
                             ChanAdapter.notifyDataSetChanged();
+
+                            BNetChatMessage mBNetChatMessage = new BNetChatMessage(BNetChatEventId.EID_CHANNEL, null, ChannelName);
+                            ChatItems.add(mBNetChatMessage);
+                            ChatAdapter.notifyDataSetChanged();
                         }
                     }
                 });

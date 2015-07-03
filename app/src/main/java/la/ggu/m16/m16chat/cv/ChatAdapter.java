@@ -35,6 +35,14 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
 
         if (bcm != null) {
             switch (bcm.eid) {
+                case EID_CHANNEL: {
+                    v = vi.inflate(R.layout.custom_chat_single, null);
+                    v.setBackgroundColor(0xfff4e4ce);
+                    TextView mChatSingleRow = (TextView) v.findViewById(R.id.chat_single_row);
+                    mChatSingleRow.setTextColor(0xff4C2001);
+                    mChatSingleRow.setText("채널 입장: "+bcm.message);
+                    break;
+                }
                 case EID_JOIN: {
                     v = vi.inflate(R.layout.custom_chat_single, null);
                     v.setBackgroundColor(0xffF0FEE6);
