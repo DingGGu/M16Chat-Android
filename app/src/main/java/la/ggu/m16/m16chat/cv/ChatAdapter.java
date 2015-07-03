@@ -37,27 +37,63 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
             switch (bcm.eid) {
                 case EID_JOIN: {
                     v = vi.inflate(R.layout.custom_chat_single, null);
+                    v.setBackgroundColor(0xffF0FEE6);
                     TextView mChatSingleRow = (TextView) v.findViewById(R.id.chat_single_row);
+                    mChatSingleRow.setTextColor(0xff53B84D);
                     mChatSingleRow.setText(ParseUsername.parseColor(bcm.username) + " 님이 입장하셨습니다.");
                     break;
                 }
                 case EID_LEAVE: {
                     v = vi.inflate(R.layout.custom_chat_single, null);
+                    v.setBackgroundColor(0xffF0FEE6);
                     TextView mChatSingleRow = (TextView) v.findViewById(R.id.chat_single_row);
+                    mChatSingleRow.setTextColor(0xff53B84D);
                     mChatSingleRow.setText(ParseUsername.parseColor(bcm.username) + " 님이 퇴장하셨습니다.");
                     break;
                 }
-                case EID_ERROR:
+                case EID_ERROR:{
+                    v = vi.inflate(R.layout.custom_chat_single, null);
+                    v.setBackgroundColor(0xffFFEEE5);
+                    TextView mChatSingleRow = (TextView) v.findViewById(R.id.chat_single_row);
+                    mChatSingleRow.setTextColor(0xffB23838);
+                    mChatSingleRow.setText(bcm.message);
+                    break;
+                }
                 case EID_INFO: {
                     v = vi.inflate(R.layout.custom_chat_single, null);
+                    v.setBackgroundColor(0xffe6f7ff);
                     TextView mChatSingleRow = (TextView) v.findViewById(R.id.chat_single_row);
+                    mChatSingleRow.setTextColor(0xff398DB2);
                     mChatSingleRow.setText(bcm.message);
+                    break;
+                }
+                case EID_BROADCAST: {
+                    v = vi.inflate(R.layout.custom_chat, null);
+                    v.setBackgroundColor(0xff1D1D1D);
+                    TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);
+                    TextView mChatMessage = (TextView) v.findViewById(R.id.chat_message);
+                    mChatUserName.setTextColor(0xffFFFFFF);
+                    mChatUserName.setText(bcm.username);
+                    mChatMessage.setTextColor(0xffFFFFFF);
+                    mChatMessage.setText(bcm.message);
+                    break;
+                }
+                case EID_WHISPERSENT:
+                case EID_WHISPER: {
+                    v = vi.inflate(R.layout.custom_chat, null);
+                    v.setBackgroundColor(0xffFFE5F6);
+                    TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);
+                    TextView mChatMessage = (TextView) v.findViewById(R.id.chat_message);
+                    mChatUserName.setTextColor(0xffFF34F1);
+                    mChatUserName.setText(bcm.username);
+                    mChatMessage.setText(bcm.message);
                     break;
                 }
                 default: {
                     v = vi.inflate(R.layout.custom_chat, null);
                     TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);
                     TextView mChatMessage = (TextView) v.findViewById(R.id.chat_message);
+                    mChatUserName.setTextColor(0xffe4b011);
                     mChatUserName.setText(bcm.username);
                     mChatMessage.setText(bcm.message);
                     break;

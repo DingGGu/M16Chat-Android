@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,10 +24,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import bnetp.*;
 import la.ggu.m16.m16chat.cv.ChanAdapter;
 import la.ggu.m16.m16chat.cv.ChatAdapter;
+import la.ggu.m16.m16chat.util.ParseUsername;
 
 public class ChatActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -58,6 +61,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         chat_activity = (DrawerLayout) findViewById(R.id.chat_activity);
         chat_drawer = (RelativeLayout) findViewById(R.id.chat_drawer);
@@ -227,6 +233,10 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     public void chatSendMessage() {
         String message = chat_edittext.getText().toString();
+        if (message.length() == 0) {
+            Toast.makeText(this, "메세지를 입력하세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         switch(chat_spinner.getSelectedItemPosition()) {
             case 0:
                 message = "/c m "+message;
@@ -243,6 +253,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         }
         BNetProtocol.sendChatCommand(message);
         chat_edittext.setText("");
+        if (Pattern.matches("^/(.*)", message)) {
+            return;
+        }
         BNetChatMessage mBNetChatMessage = new BNetChatMessage(BNetChatEventId.EID_TALK, BNetProtocol.getUsername(), message);
         ChatItems.add(mBNetChatMessage);
         ChatAdapter.notifyDataSetChanged();
