@@ -296,13 +296,14 @@ public class BNetProtocol extends Thread implements Runnable {
                     switch (eid) {
                         case EID_CHANNEL:{
                             if(mBNetProtocolInterface != null) {
-                                this.mBNetProtocolInterface.clearChannelUser();
+                                String channel = is.readNTString();
+                                this.mBNetProtocolInterface.clearChannelUser(channel);
                             }
                             break;
                         }
                         case EID_SHOWUSER:{
                             if(mBNetProtocolInterface != null) {
-                                mBNetChannelUser = new BNetChannelUser(username);
+                                mBNetChannelUser = new BNetChannelUser(eid, username);
                                 this.mBNetProtocolInterface.addChannelUser(mBNetChannelUser);
                             }
                             break;
@@ -312,7 +313,7 @@ public class BNetProtocol extends Thread implements Runnable {
                         case EID_INFO: {
                             String message = is.readNTString();
                             if(mBNetProtocolInterface != null) {
-                                mBNetChatMessage = new BNetChatMessage(username, message);
+                                mBNetChatMessage = new BNetChatMessage(eid, username, message);
                                 this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
                             break;
@@ -321,22 +322,26 @@ public class BNetProtocol extends Thread implements Runnable {
                         case EID_TALK: {
                             String message = is.readNTString();
                             if(mBNetProtocolInterface != null) {
-                                mBNetChatMessage = new BNetChatMessage(username, message);
+                                mBNetChatMessage = new BNetChatMessage(eid, username, message);
                                 this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
                             break;
                         }
                         case EID_JOIN: {
                             if(mBNetProtocolInterface != null) {
-                                mBNetChannelUser = new BNetChannelUser(username);
+                                mBNetChannelUser = new BNetChannelUser(eid, username);
                                 this.mBNetProtocolInterface.addChannelUser(mBNetChannelUser);
+                                mBNetChatMessage = new BNetChatMessage(eid, username);
+                                this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
                             break;
                         }
                         case EID_LEAVE: {
                             if(mBNetProtocolInterface != null) {
-                                mBNetChannelUser = new BNetChannelUser(username);
+                                mBNetChannelUser = new BNetChannelUser(eid, username);
                                 this.mBNetProtocolInterface.delChannelUser(mBNetChannelUser);
+                                mBNetChatMessage = new BNetChatMessage(eid, username);
+                                this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
                             break;
                         }

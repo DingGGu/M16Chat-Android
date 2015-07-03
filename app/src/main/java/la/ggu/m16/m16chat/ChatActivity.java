@@ -44,6 +44,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private Button chat_submit;
 
     private static int BACK_PRESSED_NUM;
+    private int ChannelUsersNum;
+    private String ChannelName;
 
     private Thread ChatThread = null;
     private BNetProtocol BNetProtocol = null;
@@ -100,6 +102,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         if (ChanUsers != null && ChanAdapter != null) {
+                            ChannelUsersNum++;
+                            setTitle();
                             ChanUsers.add(obj);
                             ChanAdapter.notifyDataSetChanged();
                         }
@@ -113,6 +117,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         if (ChanUsers != null && ChanAdapter != null) {
+                            ChannelUsersNum--;
+                            setTitle();
                             ChanUsers.remove(obj);
                             ChanAdapter.notifyDataSetChanged();
 
@@ -131,21 +137,19 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             }
 
             @Override
-            public void clearChannelUser() {
+            public void clearChannelUser(final String channel) {
                 mChannelUserHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         if (ChanUsers != null && ChanAdapter != null) {
+                            ChannelName = channel;
+                            ChannelUsersNum = 0;
+                            setTitle();
                             ChanUsers.clear();
                             ChanAdapter.notifyDataSetChanged();
                         }
                     }
                 });
-            }
-
-            @Override
-            public void receiveMessage(final String message) {
-
             }
 
             @Override
@@ -172,6 +176,10 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
         ChatThread = new Thread(BNetProtocol);
         ChatThread.start();
+    }
+
+    public void setTitle() {
+        setTitle(ChannelName+" ("+ChannelUsersNum+")");
     }
 
 
@@ -235,7 +243,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         }
         BNetProtocol.sendChatCommand(message);
         chat_edittext.setText("");
-        BNetChatMessage mBNetChatMessage = new BNetChatMessage(BNetProtocol.getUsername(), message);
+        BNetChatMessage mBNetChatMessage = new BNetChatMessage(BNetChatEventId.EID_TALK, BNetProtocol.getUsername(), message);
         ChatItems.add(mBNetChatMessage);
         ChatAdapter.notifyDataSetChanged();
     }
@@ -255,6 +263,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             }
         }, 2000);
         if (BACK_PRESSED_NUM == 2) {
+            BNetProtocol.disconnect();
             ChatThread.interrupt();
             super.onBackPressed();
         }
