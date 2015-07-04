@@ -65,7 +65,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     private NotificationManager mNotificationManager;
     private int mNotificationNumber;
-    private Uri DeafultAlarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    private Uri DefaultAlarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         chat_view.setAdapter(ChatAdapter);
 
         chat_spinner = (Spinner) findViewById(R.id.chat_spinner);
-        chat_spinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
+        chat_spinner.setAdapter(new ArrayAdapter<String>(this, R.layout.chat_spinner,
                 getResources().getStringArray(R.array.CHAT_SPINNER_ITEMS)));
         chat_spinner.setSelection(2);
 
@@ -194,7 +194,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                                                         .setNumber(++mNotificationNumber)
                                                         .setAutoCancel(true)
                                                         .setVibrate(new long[] { 1000, 1000 })
-                                                        .setSound(DeafultAlarmSound)
+                                                        .setSound(DefaultAlarmSound)
                                                         .setContentIntent(pendingintent);
                                         mNotificationManager.notify(0, mBuilder.build());
                                     }

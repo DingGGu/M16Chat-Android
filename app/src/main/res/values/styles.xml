@@ -5,6 +5,9 @@
         <item name="colorPrimary">#FECB16</item>
         <item name="colorPrimaryDark">#CBA20F</item>
         <item name="android:windowBackground">@color/white</item>
+        <item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
 </resources>
