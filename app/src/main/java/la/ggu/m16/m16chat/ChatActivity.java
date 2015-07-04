@@ -27,7 +27,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import bnetp.*;
@@ -63,6 +62,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private Handler BackPressedHandler = new Handler();
 
     private NotificationManager mNotificationManager;
+    private int mNotificationNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,17 +178,25 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         if (ChatItems != null && ChatAdapter != null) {
-//                            if(obj.message.toLowerCase().contains(uniqueUserName.toLowerCase())) { //알림
-//                                PendingIntent pendingintent = PendingIntent.getActivity(ChatActivity.this, 0, new Intent(ChatActivity.this, ChatActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//                                NotificationCompat.Builder mBuilder =
-//                                        new NotificationCompat.Builder(ChatActivity.this)
-//                                                .setSmallIcon(R.drawable.ic_m16_chat)
-//                                                .setContentTitle(obj.username)
-//                                                .setContentText(obj.message)
-//                                                .setContentIntent(pendingintent);
-//                                mNotificationManager.notify(0, mBuilder.build());
-//                            }
+                            switch(obj.eid) {
+                                case EID_TALK:
+                                case EID_WHISPER: {
+                                    if(obj.message.toLowerCase().contains(uniqueUserName.toLowerCase())) { //알림
+                                        PendingIntent pendingintent = PendingIntent.getActivity(ChatActivity.this, 0, new Intent(ChatActivity.this, ChatActivity.class), PendingIntent.FLAG_NO_CREATE);
+
+                                        NotificationCompat.Builder mBuilder =
+                                                new NotificationCompat.Builder(ChatActivity.this)
+                                                        .setSmallIcon(R.drawable.ic_m16_chat)
+                                                        .setContentTitle(obj.username+" 님이 언급했어요.")
+                                                        .setContentText(obj.message)
+                                                        .setNumber(++mNotificationNumber)
+                                                        .setAutoCancel(true)
+                                                        .setContentIntent(pendingintent);
+                                        mNotificationManager.notify(0, mBuilder.build());
+                                    }
+                                    break;
+                                }
+                            }
 
                             ChatItems.add(obj);
                             ChatAdapter.notifyDataSetChanged();

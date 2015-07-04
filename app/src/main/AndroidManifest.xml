@@ -22,6 +22,8 @@
         <activity
             android:name=".ChatActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
             android:label="@string/title_activity_chat" >
         </activity>
     </application>
