@@ -65,7 +65,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     private NotificationManager mNotificationManager;
     private int mNotificationNumber;
-    private Uri DeafultAlaramSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    private Uri DeafultAlarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,18 +138,17 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         if (ChanUsers != null && ChanAdapter != null) {
                             ChannelUsersNum--;
                             setTitle();
-                            ChanUsers.remove(obj);
-                            ChanAdapter.notifyDataSetChanged();
-
-
-//                                Iterator<BNetChannelUser> it = ChanUsers.iterator();
-//                                while (it.hasNext()) {
-//                                    BNetChannelUser cu = it.next();
-//                                    if (cu.username.equals(obj.username)) {
-//                                        ChanUsers.remove(cu);
-//                                        ChanAdapter.notifyDataSetChanged();
-//                                    }
+                            //TODO: Remove Channel Users
+//                            ChanUsers.remove(obj);
+//                            ChanAdapter.notifyDataSetChanged();
+//                            Iterator<BNetChannelUser> it = ChanUsers.iterator();
+//                            while (it.hasNext()) {
+//                                BNetChannelUser cu = it.next();
+//                                if (cu.username.equals(obj.username)) {
+//                                    ChanUsers.remove(cu);
+//                                    ChanAdapter.notifyDataSetChanged();
 //                                }
+//                            }
                         }
                     }
                 });
@@ -195,7 +194,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                                                         .setNumber(++mNotificationNumber)
                                                         .setAutoCancel(true)
                                                         .setVibrate(new long[] { 1000, 1000 })
-                                                        .setSound(DeafultAlaramSound)
+                                                        .setSound(DeafultAlarmSound)
                                                         .setContentIntent(pendingintent);
                                         mNotificationManager.notify(0, mBuilder.build());
                                     }
