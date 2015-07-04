@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
@@ -63,6 +65,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     private NotificationManager mNotificationManager;
     private int mNotificationNumber;
+    private Uri DeafultAlaramSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,10 +190,12 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                                         NotificationCompat.Builder mBuilder =
                                                 new NotificationCompat.Builder(ChatActivity.this)
                                                         .setSmallIcon(R.drawable.ic_m16_chat)
-                                                        .setContentTitle(obj.username+" 님이 언급했어요.")
+                                                        .setContentTitle(obj.username + " 님이 언급했어요.")
                                                         .setContentText(obj.message)
                                                         .setNumber(++mNotificationNumber)
                                                         .setAutoCancel(true)
+                                                        .setVibrate(new long[] { 1000, 1000 })
+                                                        .setSound(DeafultAlaramSound)
                                                         .setContentIntent(pendingintent);
                                         mNotificationManager.notify(0, mBuilder.build());
                                     }
