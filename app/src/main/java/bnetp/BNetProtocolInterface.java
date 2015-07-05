@@ -1,6 +1,7 @@
 package bnetp;
 
 public interface BNetProtocolInterface {
+    void startChat();
     void initUserInfo(String uniqueUserName);
 
     void receiveMessage(BNetChatMessage obj);

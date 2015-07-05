@@ -51,6 +51,9 @@ public class BNetProtocol extends Thread implements Runnable {
     public BNetProtocol(String username, String password) {
         this.username = username;
         this.password = password;
+        if(mBNetProtocolInterface != null) {
+            this.mBNetProtocolInterface.startChat();
+        }
     }
 
     public void BNetConnect() throws Exception {

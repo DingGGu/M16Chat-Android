@@ -8,9 +8,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 import bnetp.*;
 import la.ggu.m16.m16chat.cv.ChanAdapter;
 import la.ggu.m16.m16chat.cv.ChatAdapter;
-import la.ggu.m16.m16chat.util.ParseUsername;
 
 public class ChatActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -55,6 +54,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private int ChannelUsersNum;
     private String ChannelName;
     private String uniqueUserName;
+    public static int THREAD_COUNT  = 0;
 
     private Thread ChatThread = null;
     private BNetProtocol BNetProtocol = null;
@@ -62,6 +62,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private Handler mChatHandler = new Handler();
     private Handler mChannelUserHandler = new Handler();
     private Handler BackPressedHandler = new Handler();
+    private Handler errorHandler;
 
     private NotificationManager mNotificationManager;
     private int mNotificationNumber;
@@ -111,6 +112,10 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         String login_password = intent.getStringExtra("login_password");
         BNetProtocol = new BNetProtocol(login_username, login_password);
         BNetProtocol.setBnetProtocolInterface(new BNetProtocolInterface() {
+            @Override
+            public void startChat() {
+                THREAD_COUNT++;
+            }
             @Override
             public void initUserInfo(final String un) {
                 uniqueUserName = un;
@@ -211,20 +216,35 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
             @Override
             public void throwError(final String s) {
+                Message msg = new Message();
+                msg.obj = s;
+                errorHandler.handleMessage(msg);
                 ChatThread.interrupt();
                 finish();
             }
-
-
         });
 
         ChatThread = new Thread(BNetProtocol);
         ChatThread.start();
+
+        errorHandler = new Handler() {
+            @Override
+            public void handleMessage(final Message msg) {
+                errorHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ChatActivity.this, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                super.handleMessage(msg);
+            }
+        };
     }
 
     public void setTitle() {
         setTitle(ChannelName+" ("+ChannelUsersNum+")");
     }
+
 
 
     @Override
