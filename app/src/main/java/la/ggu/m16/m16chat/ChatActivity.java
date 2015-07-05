@@ -269,16 +269,20 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         setTitle(ChannelName + " (" + ChannelUsersNum + ")");
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent e) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (!chat_activity.isDrawerOpen(chat_drawer)) {
+                chat_activity.openDrawer(chat_drawer);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, e);
+    }
 
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean drawerOpen = chat_activity.isDrawerOpen(chat_drawer);
-//        if(!drawerOpen) {
-//            chat_activity.openDrawer(chat_drawer);
-//        } else {
-//            chat_activity.closeDrawer(chat_drawer);
-//        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -291,18 +295,15 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_clear) {
-            ChatItems.clear();
-            ChatAdapter.notifyDataSetChanged();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_channel:
+                if (!chat_activity.isDrawerOpen(chat_drawer)) {
+                    chat_activity.openDrawer(chat_drawer);
+                } else {
+                    chat_activity.closeDrawer(chat_drawer);
+                }
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
