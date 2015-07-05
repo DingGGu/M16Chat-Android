@@ -1,8 +1,10 @@
 package la.ggu.m16.m16chat;
 
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -18,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +37,7 @@ import java.util.regex.Pattern;
 import bnetp.*;
 import la.ggu.m16.m16chat.cv.ChanAdapter;
 import la.ggu.m16.m16chat.cv.ChatAdapter;
+import la.ggu.m16.m16chat.util.ParseUsername;
 
 public class ChatActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -81,6 +85,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         channel_user_list = (ListView) findViewById(R.id.channel_user_list);
         ChanAdapter = new ChanAdapter(this, R.id.channel_user_list_item, ChanUsers);
         channel_user_list.setAdapter(ChanAdapter);
+        channel_user_list.setOnItemClickListener(new ChanUserClickListener());
 
         chat_view = (ListView) findViewById(R.id.chat_view);
         ChatAdapter = new ChatAdapter(this, R.layout.custom_chat, ChatItems);
@@ -248,7 +253,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void setTitle() {
-        setTitle(ChannelName+" ("+ChannelUsersNum+")");
+        setTitle(ChannelName + " (" + ChannelUsersNum + ")");
     }
 
 
@@ -286,6 +291,50 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class ChanUserClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            ChanUserSelectItem(position);
+        }
+    }
+
+    private void ChanUserSelectItem(int position) {
+        final BNetChannelUser ChanUsersItem = ChanUsers.get(position);
+
+        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "추방 (/kick)", "채널밴 (/ban)"};
+        AlertDialog.Builder Builder = new AlertDialog.Builder(this);
+        final String ItemUserName = ParseUsername.parseColor(ChanUsersItem.username);
+        Builder.setTitle(ItemUserName);
+        Builder.setItems(DialogFunctions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        chat_edittext.setText("/w " + ItemUserName + " ");
+                        break;
+                    case 1:
+                        chat_edittext.setText("/kick " + ItemUserName);
+                        chatSendMessage();
+                        break;
+                    case 2:
+                        chat_edittext.setText("/ban " + ItemUserName);
+                        chatSendMessage();
+                        break;
+                }
+            }
+        });
+        Builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog Alert = Builder.create();
+        Alert.show();
+
+        chat_activity.closeDrawer(chat_drawer);
     }
 
     @Override
