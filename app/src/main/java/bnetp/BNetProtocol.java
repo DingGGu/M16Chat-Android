@@ -51,12 +51,12 @@ public class BNetProtocol extends Thread implements Runnable {
     public BNetProtocol(String username, String password) {
         this.username = username;
         this.password = password;
-        if(mBNetProtocolInterface != null) {
-            this.mBNetProtocolInterface.startChat();
-        }
     }
 
     public void BNetConnect() throws Exception {
+        if(mBNetProtocolInterface != null) {
+            this.mBNetProtocolInterface.startChat();
+        }
         socket = makeSocket("119.194.195.251", 5004);
         BNInputStream = new BNetInputStream(socket.getInputStream());
         BNetOutputStream = new DataOutputStream(socket.getOutputStream());

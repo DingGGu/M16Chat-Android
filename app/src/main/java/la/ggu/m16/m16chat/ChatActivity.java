@@ -54,7 +54,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private int ChannelUsersNum;
     private String ChannelName;
     private String uniqueUserName;
-    public static int THREAD_COUNT  = 0;
+    private int THREAD_COUNT;
 
     private Thread ChatThread = null;
     private BNetProtocol BNetProtocol = null;
@@ -107,6 +107,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             }
         });
 
+        THREAD_COUNT = 0;
+
         Intent intent = getIntent();
         String login_username = intent.getStringExtra("login_username");
         String login_password = intent.getStringExtra("login_password");
@@ -114,7 +116,10 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         BNetProtocol.setBnetProtocolInterface(new BNetProtocolInterface() {
             @Override
             public void startChat() {
-                THREAD_COUNT++;
+                if (THREAD_COUNT > 2) {
+                    this.throwError("잠시 후 다시 시도해주세요.");
+                }
+                THREAD_COUNT = THREAD_COUNT + 1;
             }
             @Override
             public void initUserInfo(final String un) {
@@ -222,6 +227,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                 ChatThread.interrupt();
                 finish();
             }
+
         });
 
         ChatThread = new Thread(BNetProtocol);
