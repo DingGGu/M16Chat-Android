@@ -437,7 +437,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             }
         }, 2000);
         if (BACK_PRESSED_NUM == 2) {
-            BNetProtocol.disconnect();
             ChatThread.interrupt();
             super.onBackPressed();
         }
