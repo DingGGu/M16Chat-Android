@@ -14,6 +14,7 @@ import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.text.style.BulletSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -53,6 +55,10 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private Spinner chat_spinner;
     private EditText chat_edittext;
     private Button chat_submit;
+
+    private LinearLayout chat_menu_channel;
+    private LinearLayout chat_menu_alarm;
+    private LinearLayout chat_menu_clear;
 
     private static int BACK_PRESSED_NUM;
     private int ChannelUsersNum;
@@ -86,6 +92,13 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         ChanAdapter = new ChanAdapter(this, R.id.channel_user_list_item, ChanUsers);
         channel_user_list.setAdapter(ChanAdapter);
         channel_user_list.setOnItemClickListener(new ChanUserClickListener());
+
+        chat_menu_channel = (LinearLayout) findViewById(R.id.chat_menu_channel);
+        chat_menu_channel.setOnClickListener(this);
+        chat_menu_alarm = (LinearLayout) findViewById(R.id.chat_menu_alarm);
+        chat_menu_alarm.setOnClickListener(this);
+        chat_menu_clear = (LinearLayout) findViewById(R.id.chat_menu_clear);
+        chat_menu_clear.setOnClickListener(this);
 
         chat_view = (ListView) findViewById(R.id.chat_view);
         ChatAdapter = new ChatAdapter(this, R.layout.custom_chat, ChatItems);
@@ -341,6 +354,38 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v.getId() == chat_submit.getId()) {
             chatSendMessage();
+        }
+        if (v.getId() == chat_menu_channel.getId()) {
+            AlertDialog.Builder Builder = new AlertDialog.Builder(this);
+            Builder.setTitle("채널 변경");
+            Builder.setMessage("입장할 채널을 입력하세요.");
+            final EditText channel_input = new EditText(this);
+            Builder.setView(channel_input);
+
+            Builder.setPositiveButton("입장", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String channel = channel_input.getText().toString();
+                    chat_edittext.setText("/join " + channel);
+                    chatSendMessage();
+                }
+            });
+
+            Builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            Builder.show();
+            chat_activity.closeDrawer(chat_drawer);
+        }
+        if (v.getId() == chat_menu_clear.getId()) {
+            ChatItems.clear();
+            ChatAdapter.notifyDataSetChanged();
+            Toast.makeText(this, "채팅을 청소했어요.", Toast.LENGTH_SHORT).show();
+            chat_activity.closeDrawer(chat_drawer);
         }
     }
 
