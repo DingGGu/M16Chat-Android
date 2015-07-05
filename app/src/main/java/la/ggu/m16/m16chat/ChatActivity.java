@@ -14,7 +14,6 @@ import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.text.style.BulletSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -82,6 +81,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setElevation(0);
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -302,7 +304,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                 } else {
                     chat_activity.closeDrawer(chat_drawer);
                 }
-                return true;
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
