@@ -171,11 +171,15 @@ public class BNetProtocol extends Thread implements Runnable {
                     if (pr.packetId == BNetProtocolPacketId.SID_AUTH_CHECK) {
                         if (result != 0) {
                             switch (result) {
-                                case 0x211:
-                                    System.out.println("BANNED!" + extraInfo);
+                                case 0x201:
+                                    if(mBNetProtocolInterface != null) {
+                                        this.mBNetProtocolInterface.throwError("서버에서 밴 되었어요." + extraInfo);
+                                    }
                                     break;
                                 default:
-                                    System.out.println("Unknown Error" + Integer.toHexString(result));
+                                    if(mBNetProtocolInterface != null) {
+                                        this.mBNetProtocolInterface.throwError("알 수 없는 오류: " + Integer.toHexString(result));
+                                    }
                                     break;
                             }
                             disconnect();
@@ -186,7 +190,9 @@ public class BNetProtocol extends Thread implements Runnable {
                     } else {
                         if (result != 2) {
                             disconnect();
-                            System.out.println("Failed Version Check!");
+                            if(mBNetProtocolInterface != null) {
+                                this.mBNetProtocolInterface.throwError("올바르지 않은 접근이에요." + extraInfo);
+                            }
                             break;
                         }
                         System.out.println("Passed Check Revision");
