@@ -29,11 +29,11 @@
             <Spinner
                 android:id="@+id/chat_spinner"
                 android:layout_width="0dp"
-                android:layout_height="35dp"
+                android:layout_height="32dp"
                 android:layout_gravity="center_vertical|center"
                 android:layout_weight="15"
                 android:textColor="@color/white"
-                android:background="@drawable/chat_spinner"
+                android:background="@color/bg_main"
                 android:gravity="center" />
 
             <EditText
