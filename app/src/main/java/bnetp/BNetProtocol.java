@@ -140,7 +140,7 @@ public class BNetProtocol extends Thread implements Runnable {
                         serverToken = is.readDWord();
                         is.skip(4); // int udpValue = is.readDWord();
                     }
-                    assert (is.available() == 0);
+                    assert is.available() == 0;
 
                     BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_AUTH_CHECK);
                     p.writeDWord(clientToken);  // Client Token
@@ -337,7 +337,7 @@ public class BNetProtocol extends Thread implements Runnable {
                         case EID_TALK: {
                             String message = is.readNTString();
                             if(mBNetProtocolInterface != null) {
-                                mBNetChatMessage = new BNetChatMessage(eid, username, message);
+                                mBNetChatMessage = new BNetChatMessage(eid, username, message, flags);
                                 this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
                             break;

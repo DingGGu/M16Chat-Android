@@ -108,7 +108,10 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
                     v = vi.inflate(R.layout.custom_chat, null);
                     TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);
                     TextView mChatMessage = (TextView) v.findViewById(R.id.chat_message);
-                    mChatUserName.setTextColor(0xffe4b011);
+                    if (bcm.flags == 8)
+                        mChatUserName.setTextColor(0xff8905d5);
+                    else
+                        mChatUserName.setTextColor(0xffe4b011);
                     mChatUserName.setText(bcm.username);
                     mChatMessage.setText(bcm.message);
                     break;
