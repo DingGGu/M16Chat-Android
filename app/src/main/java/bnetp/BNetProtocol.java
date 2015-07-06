@@ -127,7 +127,6 @@ public class BNetProtocol extends Thread implements Runnable {
                 }
 
                 case SID_PING: {
-                    System.out.println("PONG!");
                     BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_PING);
                     p.writeDWord(is.readDWord());
                     p.sendPacket(BNetOutputStream);
@@ -166,7 +165,7 @@ public class BNetProtocol extends Thread implements Runnable {
                 case SID_AUTH_CHECK: {
                     int result = is.readDWord();
                     String extraInfo = is.readNTString();
-                    assert (is.available() == 0);
+                    assert is.available() == 0;
 
                     if (pr.packetId == BNetProtocolPacketId.SID_AUTH_CHECK) {
                         if (result != 0) {
@@ -186,7 +185,6 @@ public class BNetProtocol extends Thread implements Runnable {
                             System.out.println("Disconnect!" + extraInfo);
                             break;
                         }
-                        System.out.println("Passed Check Revision");
                     } else {
                         if (result != 2) {
                             disconnect();
@@ -195,8 +193,8 @@ public class BNetProtocol extends Thread implements Runnable {
                             }
                             break;
                         }
-                        System.out.println("Passed Check Revision");
                     }
+                    System.out.println("Passed Check Revision");
                     sendAuth();
                     break;
                 }

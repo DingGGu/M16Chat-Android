@@ -319,7 +319,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private void ChanUserSelectItem(int position) {
         final BNetChannelUser ChanUsersItem = ChanUsers.get(position);
 
-        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "추방 (/kick)", "채널밴 (/ban)"};
+        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "정보 (/finger)", "추방 (/kick)", "채널밴 (/ban)"};
         AlertDialog.Builder Builder = new AlertDialog.Builder(this);
         final String ItemUserName = ParseUsername.parseColor(ChanUsersItem.username);
         Builder.setTitle(ItemUserName);
@@ -331,10 +331,14 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         chat_edittext.setText("/w " + ItemUserName + " ");
                         break;
                     case 1:
-                        chat_edittext.setText("/kick " + ItemUserName);
+                        chat_edittext.setText("/finger " + ItemUserName);
                         chatSendMessage();
                         break;
                     case 2:
+                        chat_edittext.setText("/kick " + ItemUserName);
+                        chatSendMessage();
+                        break;
+                    case 3:
                         chat_edittext.setText("/ban " + ItemUserName);
                         chatSendMessage();
                         break;
