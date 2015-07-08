@@ -7,6 +7,10 @@ public class PreferencesControl {
     public static String USER_DATA_PREF = "USER_DATA";
     public static String USER_NAME = "user_id";
     public static String USER_PWD = "user_pw";
+    public static String ALARM_DATA_PREF = "ALARM_DATA";
+    public static String ALARM_SET = "ALARM_SET";
+    public static String ALARM_ON = "ON";
+    public static String ALARM_OFF = "OFF";
 
     private Context mContext;
 

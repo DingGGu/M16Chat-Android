@@ -1,6 +1,7 @@
 package la.ggu.m16.m16chat;
 
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -39,6 +41,7 @@ import bnetp.*;
 import la.ggu.m16.m16chat.cv.ChanAdapter;
 import la.ggu.m16.m16chat.cv.ChatAdapter;
 import la.ggu.m16.m16chat.util.ParseUsername;
+import la.ggu.m16.m16chat.util.PreferencesControl;
 
 public class ChatActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -75,7 +78,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     private NotificationManager mNotificationManager;
     private int mNotificationNumber;
-    private Uri DefaultAlarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,10 +143,12 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                 }
                 THREAD_COUNT = THREAD_COUNT + 1;
             }
+
             @Override
             public void initUserInfo(final String un) {
                 uniqueUserName = un;
             }
+
             @Override
             public void addChannelUser(final BNetChannelUser obj) {
                 mChannelUserHandler.post(new Runnable() {
@@ -210,23 +214,32 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         if (ChatItems != null && ChatAdapter != null) {
-                            switch(obj.eid) {
+                            switch (obj.eid) {
                                 case EID_TALK:
                                 case EID_WHISPER: {
-                                    if(obj.message.toLowerCase().contains(uniqueUserName.toLowerCase())) { //알림
-                                        PendingIntent pendingintent = PendingIntent.getActivity(ChatActivity.this, 0, new Intent(ChatActivity.this, ChatActivity.class), PendingIntent.FLAG_NO_CREATE);
-
-                                        NotificationCompat.Builder mBuilder =
-                                                new NotificationCompat.Builder(ChatActivity.this)
-                                                        .setSmallIcon(R.drawable.ic_m16_chat)
-                                                        .setContentTitle(obj.username + " 님이 언급했어요.")
-                                                        .setContentText(obj.message)
-                                                        .setNumber(++mNotificationNumber)
-                                                        .setAutoCancel(true)
-                                                        .setVibrate(new long[] { 1000, 1000 })
-                                                        .setSound(DefaultAlarmSound)
-                                                        .setContentIntent(pendingintent);
-                                        mNotificationManager.notify(0, mBuilder.build());
+                                    String ALARM_TOGGLE = PreferencesControl.getInstance(ChatActivity.this).get(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, null);
+                                    if (ALARM_TOGGLE.equals(PreferencesControl.ALARM_OFF))
+                                        break;
+                                    if (obj.message.toLowerCase().contains(uniqueUserName.toLowerCase())) { //알림
+                                        PendingIntent pendingintent = PendingIntent.getActivity(ChatActivity.this, 0, new Intent(ChatActivity.this, ChatActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                                        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+                                            NotificationCompat.Builder mBuilder =
+                                                    new NotificationCompat.Builder(ChatActivity.this)
+                                                            .setSmallIcon(R.drawable.ic_m16_chat)
+                                                            .setTicker(obj.username + " 님이 언급했어요.")
+                                                            .setContentTitle(obj.username + " 님이 언급했어요.")
+                                                            .setContentText(obj.message)
+                                                            .setAutoCancel(true)
+                                                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
+                                                            .setContentIntent(pendingintent);
+                                            mNotificationManager.notify(0, mBuilder.build());
+                                        } else {
+                                            Notification notification = new Notification(R.drawable.ic_m16_chat, obj.username + "님이 언급했어요.", System.currentTimeMillis());
+                                            notification.flags = Notification.FLAG_AUTO_CANCEL;
+                                            notification.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+                                            notification.setLatestEventInfo(ChatActivity.this, obj.username + "님이 언급했어요.", "", pendingintent);
+                                            mNotificationManager.notify(0, notification);
+                                        }
                                     }
                                     break;
                                 }
@@ -265,6 +278,11 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                 super.handleMessage(msg);
             }
         };
+
+        String ALARM_TOGGLE = PreferencesControl.getInstance(this).get(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, null);
+        if (ALARM_TOGGLE == null) {
+            PreferencesControl.getInstance(this).set(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, PreferencesControl.ALARM_ON);
+        }
     }
 
     public void setTitle() {
@@ -387,6 +405,16 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
             Builder.show();
             chat_activity.closeDrawer(chat_drawer);
+        }
+        if (v.getId() == chat_menu_alarm.getId()) {
+            String ALARM_TOGGLE = PreferencesControl.getInstance(this).get(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, null);
+            if (ALARM_TOGGLE.equals(PreferencesControl.ALARM_ON)) {
+                PreferencesControl.getInstance(this).set(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, PreferencesControl.ALARM_OFF);
+                Toast.makeText(this, "닉 언급 알람을 해제했어요.", Toast.LENGTH_SHORT).show();
+            } else {
+                PreferencesControl.getInstance(this).set(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, PreferencesControl.ALARM_ON);
+                Toast.makeText(this, "닉 언급 알람을 설정했어요.", Toast.LENGTH_SHORT).show();
+            }
         }
         if (v.getId() == chat_menu_clear.getId()) {
             ChatItems.clear();
