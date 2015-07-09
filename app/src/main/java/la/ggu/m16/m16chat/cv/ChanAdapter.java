@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import bnetp.BNetChannelUser;
 import bnetp.BNetChatMessage;
@@ -15,10 +16,10 @@ import la.ggu.m16.m16chat.R;
 import la.ggu.m16.m16chat.util.ParseUsername;
 
 public class ChanAdapter extends ArrayAdapter<BNetChannelUser> {
-    private ArrayList<BNetChannelUser> ChanUsers;
+    private CopyOnWriteArrayList<BNetChannelUser> ChanUsers;
     private Context context;
 
-    public ChanAdapter(Context context, int textViewResourceId, ArrayList<BNetChannelUser> ChanUsers) {
+    public ChanAdapter(Context context, int textViewResourceId, CopyOnWriteArrayList<BNetChannelUser> ChanUsers) {
         super(context, textViewResourceId, ChanUsers);
         this.context = context;
         this.ChanUsers = ChanUsers;

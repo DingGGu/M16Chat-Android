@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 import bnetp.*;
@@ -48,7 +49,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private DrawerLayout chat_activity;
     private RelativeLayout chat_drawer;
     private ListView channel_user_list;
-    private ArrayList<BNetChannelUser> ChanUsers = new ArrayList<BNetChannelUser>();
+    private CopyOnWriteArrayList<BNetChannelUser> ChanUsers = new CopyOnWriteArrayList<>();
     private ChanAdapter ChanAdapter;
 
     private ListView chat_view;
@@ -172,17 +173,16 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         if (ChanUsers != null && ChanAdapter != null) {
                             ChannelUsersNum--;
                             setTitle();
-                            //TODO: Remove Channel Users
-//                            ChanUsers.remove(obj);
-//                            ChanAdapter.notifyDataSetChanged();
-//                            Iterator<BNetChannelUser> it = ChanUsers.iterator();
-//                            while (it.hasNext()) {
-//                                BNetChannelUser cu = it.next();
-//                                if (cu.username.equals(obj.username)) {
-//                                    ChanUsers.remove(cu);
-//                                    ChanAdapter.notifyDataSetChanged();
-//                                }
-//                            }
+                            ChanUsers.remove(obj);
+                            ChanAdapter.notifyDataSetChanged();
+                            Iterator<BNetChannelUser> it = ChanUsers.iterator();
+                            while (it.hasNext()) {
+                                BNetChannelUser cu = it.next();
+                                if (cu.username.equals(obj.username)) {
+                                    ChanUsers.remove(cu);
+                                    ChanAdapter.notifyDataSetChanged();
+                                }
+                            }
                         }
                     }
                 });
