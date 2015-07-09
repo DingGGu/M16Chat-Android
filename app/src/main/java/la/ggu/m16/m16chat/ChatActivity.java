@@ -346,19 +346,17 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 0:
+                        chat_spinner.setSelection(2);
                         chat_edittext.setText("/w " + ItemUserName + " ");
                         break;
                     case 1:
-                        chat_edittext.setText("/finger " + ItemUserName);
-                        chatSendMessage();
+                        BNetProtocol.sendChatCommand("/finger " + ItemUserName);
                         break;
                     case 2:
-                        chat_edittext.setText("/kick " + ItemUserName);
-                        chatSendMessage();
+                        BNetProtocol.sendChatCommand("/kick " + ItemUserName);
                         break;
                     case 3:
-                        chat_edittext.setText("/ban " + ItemUserName);
-                        chatSendMessage();
+                        BNetProtocol.sendChatCommand("/ban " + ItemUserName);
                         break;
                 }
             }
