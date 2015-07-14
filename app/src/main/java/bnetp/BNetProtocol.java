@@ -11,6 +11,8 @@ import java.util.Random;
 import java.util.TimeZone;
 
 import bnetp.Hash.*;
+import bnetp.clan.ClanMember;
+import bnetp.friend.FriendEntry;
 import bnetp.util.ByteArray;
 import bnetp.util.StatString;
 
@@ -241,6 +243,41 @@ public class BNetProtocol extends Thread implements Runnable {
                         this.mBNetProtocolInterface.initUserInfo(uniqueUserName);
                     }
                     BNetChat();
+                    break;
+                }
+
+                case SID_FRIENDSLIST: {
+                    byte numEntries = is.readByte();
+                    FriendEntry[] entries = new FriendEntry[numEntries];
+
+                    for(int i = 0; i < numEntries; i++) {
+                        String uAccount = is.readNTString();
+                        byte uStatus = is.readByte();
+                        byte uLocation = is.readByte();
+                        int uProduct = is.readDWord();
+                        String uLocationName = is.readNTStringUTF8();
+
+                        entries[i] = new FriendEntry(uAccount, uStatus, uLocation, uProduct, uLocationName);
+                    }
+                    //todo: dispatch to arrayList
+                    break;
+                }
+
+                case SID_CLANMEMBERLIST: {
+                    is.readDWord();
+                    byte numMembers = is.readByte();
+                    ClanMember[] members = new ClanMember[numMembers];
+
+                    for(int i = 0; i < numMembers; i++) {
+                        String uName = is.readNTString();
+                        byte uRank = is.readByte();
+                        byte uOnline = is.readByte();
+                        String uLocation = is.readNTStringUTF8();
+
+                        members[i] = new ClanMember(uName, uRank, uOnline, uLocation);
+                    }
+                    //todo: dispatch to arrayList
+                    break;
                 }
             }
         }
@@ -364,14 +401,20 @@ public class BNetProtocol extends Thread implements Runnable {
                             }
                             break;
                         }
-                        default:
-                            Log.e("EID", String.valueOf(eid));
-                            break;
-
                     }
                 }
             }
         }
+    }
+
+    public void sendFriendsList() throws Exception {
+        BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_FRIENDSLIST);
+        p.sendPacket(BNetOutputStream);
+    }
+
+    public void sendClanMemberList() throws Exception {
+        BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANMEMBERLIST);
+        p.sendPacket(BNetOutputStream);
     }
 
     public void sendChatCommand (String data) {
