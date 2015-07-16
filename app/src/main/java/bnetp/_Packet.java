@@ -1,13 +1,9 @@
 package bnetp;
 
-import android.widget.Toast;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
-
-import la.ggu.m16.m16chat.ChatActivity;
 
 public abstract class _Packet<P extends BNetProtocolPacketId> extends BNetOutputStream {
     private final P packetId;
@@ -30,7 +26,7 @@ public abstract class _Packet<P extends BNetProtocolPacketId> extends BNetOutput
         try {
             out.write(data);
             out.flush();
-        } catch(SocketException e) {
+        } catch (SocketException e) {
             e.printStackTrace();
         }
     }

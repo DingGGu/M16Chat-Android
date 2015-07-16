@@ -34,14 +34,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 import bnetp.*;
+import bnetp.clan.ClanMember;
+import bnetp.friend.FriendEntry;
 import la.ggu.m16.m16chat.cv.ChanAdapter;
 import la.ggu.m16.m16chat.cv.ChatAdapter;
+import la.ggu.m16.m16chat.cv.FriendAdapter;
+import la.ggu.m16.m16chat.cv.ClanMemberAdapter;
 import la.ggu.m16.m16chat.util.ParseUsername;
 import la.ggu.m16.m16chat.util.PreferencesControl;
 
@@ -50,10 +55,14 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private DrawerLayout chat_activity;
     private RelativeLayout chat_drawer;
     private ListView channel_user_list;
-    private ListView clan_user_list;
-    private ListView friend_user_list;
     private CopyOnWriteArrayList<BNetChannelUser> ChanUsers = new CopyOnWriteArrayList<>();
     private ChanAdapter ChanAdapter;
+    private ListView friend_user_list;
+    private CopyOnWriteArrayList<FriendEntry> Friends = new CopyOnWriteArrayList<>();
+    private FriendAdapter FriendAdapter;
+    private ListView clan_user_list;
+    private CopyOnWriteArrayList<ClanMember> ClanMembers = new CopyOnWriteArrayList<>();
+    private ClanMemberAdapter ClanMemberAdapter;
 
     private ListView chat_view;
     private ArrayList<BNetChatMessage> ChatItems = new ArrayList<BNetChatMessage>();
@@ -77,6 +86,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     private Handler mChatHandler = new Handler();
     private Handler mChannelUserHandler = new Handler();
+    private Handler mFriendEntryHandler = new Handler();
+    private Handler mClanMemberHandler = new Handler();
     private Handler BackPressedHandler = new Handler();
     private Handler errorHandler;
 
@@ -105,8 +116,12 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         channel_user_list.setOnItemClickListener(new ChanUserClickListener());
 
         friend_user_list = (ListView) findViewById(R.id.friend_user_list);
+        FriendAdapter = new FriendAdapter(this, R.id.channel_user_list_item, Friends);
+        friend_user_list.setAdapter(FriendAdapter);
 
         clan_user_list = (ListView) findViewById(R.id.clan_user_list);
+        ClanMemberAdapter = new ClanMemberAdapter(this, R.id.channel_user_list_item, ClanMembers);
+        clan_user_list.setAdapter(ClanMemberAdapter);
 
         chat_menu_channel = (LinearLayout) findViewById(R.id.chat_menu_channel);
         chat_menu_channel.setOnClickListener(this);
@@ -264,6 +279,34 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
                             ChatItems.add(obj);
                             ChatAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void dispatchFriendList(final FriendEntry[] entries) {
+                mFriendEntryHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (Friends != null && FriendAdapter != null) {
+                            Friends.clear();
+                            Collections.addAll(Friends, entries);
+                            FriendAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void dispatchClanMembers(final ClanMember[] members) {
+                mClanMemberHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ClanMembers != null && ClanMemberAdapter != null) {
+                            ClanMembers.clear();
+                            Collections.addAll(ClanMembers, members);
+                            ClanMemberAdapter.notifyDataSetChanged();
                         }
                     }
                 });
@@ -443,11 +486,13 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             channel_user_list.setVisibility(ListView.VISIBLE);
         }
         if (v.getId() == chat_menu_tab_friend.getId()) {
+            BNetProtocol.sendFriendsList();
             clan_user_list.setVisibility(ListView.INVISIBLE);
             channel_user_list.setVisibility(ListView.INVISIBLE);
             friend_user_list.setVisibility(ListView.VISIBLE);
         }
         if (v.getId() == chat_menu_tab_clan.getId()) {
+            BNetProtocol.sendClanMemberList();
             friend_user_list.setVisibility(ListView.INVISIBLE);
             channel_user_list.setVisibility(ListView.INVISIBLE);
             clan_user_list.setVisibility(ListView.VISIBLE);

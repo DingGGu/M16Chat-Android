@@ -245,40 +245,6 @@ public class BNetProtocol extends Thread implements Runnable {
                     BNetChat();
                     break;
                 }
-
-                case SID_FRIENDSLIST: {
-                    byte numEntries = is.readByte();
-                    FriendEntry[] entries = new FriendEntry[numEntries];
-
-                    for(int i = 0; i < numEntries; i++) {
-                        String uAccount = is.readNTString();
-                        byte uStatus = is.readByte();
-                        byte uLocation = is.readByte();
-                        int uProduct = is.readDWord();
-                        String uLocationName = is.readNTStringUTF8();
-
-                        entries[i] = new FriendEntry(uAccount, uStatus, uLocation, uProduct, uLocationName);
-                    }
-                    //todo: dispatch to arrayList
-                    break;
-                }
-
-                case SID_CLANMEMBERLIST: {
-                    is.readDWord();
-                    byte numMembers = is.readByte();
-                    ClanMember[] members = new ClanMember[numMembers];
-
-                    for(int i = 0; i < numMembers; i++) {
-                        String uName = is.readNTString();
-                        byte uRank = is.readByte();
-                        byte uOnline = is.readByte();
-                        String uLocation = is.readNTStringUTF8();
-
-                        members[i] = new ClanMember(uName, uRank, uOnline, uLocation);
-                    }
-                    //todo: dispatch to arrayList
-                    break;
-                }
             }
         }
     }
@@ -402,19 +368,66 @@ public class BNetProtocol extends Thread implements Runnable {
                             break;
                         }
                     }
+                    break;
+                }
+                case SID_FRIENDSLIST: {
+                    byte numEntries = is.readByte();
+                    FriendEntry[] entries = new FriendEntry[numEntries];
+
+                    for(int i = 0; i < numEntries; i++) {
+                        String uAccount = is.readNTString();
+                        byte uStatus = is.readByte();
+                        byte uLocation = is.readByte();
+                        int uProduct = is.readDWord();
+                        String uLocationName = is.readNTStringUTF8();
+
+                        entries[i] = new FriendEntry(uAccount, uStatus, uLocation, uProduct, uLocationName);
+                    }
+
+                    if (mBNetProtocolInterface != null) {
+                        this.mBNetProtocolInterface.dispatchFriendList(entries);
+                    }
+                    break;
+                }
+
+                case SID_CLANMEMBERLIST: {
+                    is.readDWord();
+                    byte numMembers = is.readByte();
+                    ClanMember[] members = new ClanMember[numMembers];
+
+                    for(int i = 0; i < numMembers; i++) {
+                        String uName = is.readNTString();
+                        byte uRank = is.readByte();
+                        byte uOnline = is.readByte();
+                        String uLocation = is.readNTStringUTF8();
+
+                        members[i] = new ClanMember(uName, uRank, uOnline, uLocation);
+                    }
+                    if (mBNetProtocolInterface != null) {
+                        this.mBNetProtocolInterface.dispatchClanMembers(members);
+                    }
+                    break;
                 }
             }
         }
     }
 
-    public void sendFriendsList() throws Exception {
-        BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_FRIENDSLIST);
-        p.sendPacket(BNetOutputStream);
+    public void sendFriendsList() {
+        try {
+            BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_FRIENDSLIST);
+            p.sendPacket(BNetOutputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void sendClanMemberList() throws Exception {
-        BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANMEMBERLIST);
-        p.sendPacket(BNetOutputStream);
+    public void sendClanMemberList() {
+        try {
+            BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANMEMBERLIST);
+            p.sendPacket(BNetOutputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendChatCommand (String data) {
