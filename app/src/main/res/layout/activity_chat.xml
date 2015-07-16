@@ -66,84 +66,136 @@
         android:background="#FFFFFF"
         android:layout_gravity="right">
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:background="@drawable/chat_border_bottom"
-            android:baselineAligned="false">
-
-            <LinearLayout
-                android:id="@+id/chat_menu_channel"
-                android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_weight="33.33"
-                android:padding="10dp"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/chat_menu_channel"
-                    android:contentDescription="channel" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textSize="14sp"
-                    android:textColor="#666"
-                    android:text="채널 변경"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/chat_menu_alarm"
-                android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_weight="33.33"
-                android:padding="10dp"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/chat_menu_alarm"
-                    android:contentDescription="alarm" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textSize="14sp"
-                    android:textColor="#666"
-                    android:text="알림"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/chat_menu_clear"
-                android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_weight="33.33"
-                android:padding="10dp"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/chat_menu_clear"
-                    android:contentDescription="clear" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textSize="14sp"
-                    android:textColor="#666"
-                    android:text="청소"/>
-            </LinearLayout>
-
-        </LinearLayout>
-        <ListView
-            android:id="@+id/channel_user_list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:orientation="vertical"
-            android:layout_marginTop="80dp"
-            android:background="#f0f0f0"/>
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:background="@drawable/chat_border_bottom"
+                android:baselineAligned="false">
+
+                <LinearLayout
+                    android:id="@+id/chat_menu_channel"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="33.33"
+                    android:padding="10dp"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/chat_menu_channel"
+                        android:contentDescription="channel" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="#666"
+                        android:text="채널 변경"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/chat_menu_alarm"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="33.33"
+                    android:padding="10dp"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/chat_menu_alarm"
+                        android:contentDescription="alarm" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="#666"
+                        android:text="알림"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/chat_menu_clear"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_weight="33.33"
+                    android:padding="10dp"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/chat_menu_clear"
+                        android:contentDescription="clear" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="#666"
+                        android:text="청소"/>
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/chat_menu_border_bottom">
+                <Button
+                    android:id="@+id/chat_menu_tab_channel"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="33.33"
+                    android:gravity="center|center_vertical"
+                    android:text="채널"
+                    android:textColor="@color/black"
+                    android:background="@android:color/transparent"/>
+                <Button
+                    android:id="@+id/chat_menu_tab_friend"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="33.33"
+                    android:gravity="center|center_vertical"
+                    android:text="친구"
+                    android:textColor="@color/black"
+                    android:background="@android:color/transparent"/>
+                <Button
+                    android:id="@+id/chat_menu_tab_clan"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="33.33"
+                    android:gravity="center|center_vertical"
+                    android:text="클랜"
+                    android:textColor="@color/black"
+                    android:background="@android:color/transparent"/>
+            </LinearLayout>
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <ListView
+                    android:id="@+id/clan_user_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:background="#f0f0f0"/>
+                <ListView
+                    android:id="@+id/friend_user_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:background="#f0f0f0"/>
+                <ListView
+                    android:id="@+id/channel_user_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:background="#f0f0f0"/>
+            </FrameLayout>
+        </LinearLayout>
     </RelativeLayout>
 
 

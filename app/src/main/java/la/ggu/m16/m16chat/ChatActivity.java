@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private DrawerLayout chat_activity;
     private RelativeLayout chat_drawer;
     private ListView channel_user_list;
+    private ListView clan_user_list;
+    private ListView friend_user_list;
     private CopyOnWriteArrayList<BNetChannelUser> ChanUsers = new CopyOnWriteArrayList<>();
     private ChanAdapter ChanAdapter;
 
@@ -79,6 +82,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     private NotificationManager mNotificationManager;
     private int mNotificationNumber;
+    private Button chat_menu_tab_channel;
+    private Button chat_menu_tab_friend;
+    private Button chat_menu_tab_clan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,12 +104,23 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         channel_user_list.setAdapter(ChanAdapter);
         channel_user_list.setOnItemClickListener(new ChanUserClickListener());
 
+        friend_user_list = (ListView) findViewById(R.id.friend_user_list);
+
+        clan_user_list = (ListView) findViewById(R.id.clan_user_list);
+
         chat_menu_channel = (LinearLayout) findViewById(R.id.chat_menu_channel);
         chat_menu_channel.setOnClickListener(this);
         chat_menu_alarm = (LinearLayout) findViewById(R.id.chat_menu_alarm);
         chat_menu_alarm.setOnClickListener(this);
         chat_menu_clear = (LinearLayout) findViewById(R.id.chat_menu_clear);
         chat_menu_clear.setOnClickListener(this);
+
+        chat_menu_tab_channel = (Button) findViewById(R.id.chat_menu_tab_channel);
+        chat_menu_tab_channel.setOnClickListener(this);
+        chat_menu_tab_friend = (Button) findViewById(R.id.chat_menu_tab_friend);
+        chat_menu_tab_friend.setOnClickListener(this);
+        chat_menu_tab_clan = (Button) findViewById(R.id.chat_menu_tab_clan);
+        chat_menu_tab_clan.setOnClickListener(this);
 
         chat_view = (ListView) findViewById(R.id.chat_view);
         ChatAdapter = new ChatAdapter(this, R.layout.custom_chat, ChatItems);
@@ -419,6 +436,22 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             ChatAdapter.notifyDataSetChanged();
             Toast.makeText(this, "채팅을 청소했어요.", Toast.LENGTH_SHORT).show();
             chat_activity.closeDrawer(chat_drawer);
+        }
+        if (v.getId() == chat_menu_tab_channel.getId()) {
+            friend_user_list.setVisibility(ListView.INVISIBLE);
+            clan_user_list.setVisibility(ListView.INVISIBLE);
+            channel_user_list.setVisibility(ListView.VISIBLE);
+        }
+        if (v.getId() == chat_menu_tab_friend.getId()) {
+            clan_user_list.setVisibility(ListView.INVISIBLE);
+            channel_user_list.setVisibility(ListView.INVISIBLE);
+            friend_user_list.setVisibility(ListView.VISIBLE);
+        }
+        if (v.getId() == chat_menu_tab_clan.getId()) {
+            friend_user_list.setVisibility(ListView.INVISIBLE);
+            channel_user_list.setVisibility(ListView.INVISIBLE);
+            clan_user_list.setVisibility(ListView.VISIBLE);
+
         }
     }
 
