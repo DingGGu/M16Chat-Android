@@ -2,7 +2,7 @@
     <string name="app_name">M16 Chat</string>
 
     <string name="action_settings">Settings</string>
-    <string name="title_activity_chat">ChatActivity</string>
+    <string name="title_activity_chat">Connecting…</string>
 
     <string-array name="CHAT_SPINNER_ITEMS">
         <item>클랜</item>
