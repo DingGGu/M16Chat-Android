@@ -495,12 +495,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             friend_user_list.setVisibility(ListView.VISIBLE);
         }
         if (v.getId() == chat_menu_tab_clan.getId()) {
-//            BNetProtocol.sendClanMemberList();
-            //TODO: Development from Server
-            ClanMembers.clear();
-            ClanMembers.add(new ClanMember("준비 중입니다.", (byte) 0x00, (byte) 0x00, "개발"));
-            ClanMemberAdapter.notifyDataSetChanged();
-            //TODO: Development from Server
+            BNetProtocol.sendClanMemberList();
 
             friend_user_list.setVisibility(ListView.INVISIBLE);
             channel_user_list.setVisibility(ListView.INVISIBLE);

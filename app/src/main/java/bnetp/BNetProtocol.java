@@ -424,6 +424,7 @@ public class BNetProtocol extends Thread implements Runnable {
     public void sendClanMemberList() {
         try {
             BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANMEMBERLIST);
+            p.writeDWord(1);
             p.sendPacket(BNetOutputStream);
         } catch (IOException e) {
             e.printStackTrace();
