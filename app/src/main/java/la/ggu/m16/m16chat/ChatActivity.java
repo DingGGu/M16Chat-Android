@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
 
 import bnetp.*;
 import bnetp.clan.ClanMember;
+import bnetp.clan.ClanMemberSort;
 import bnetp.friend.FriendEntry;
 import bnetp.friend.FriendSort;
 import la.ggu.m16.m16chat.cv.ChanAdapter;
@@ -309,6 +310,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     public void run() {
                         if (ClanMembers != null && ClanMemberAdapter != null) {
                             ClanMembers.clear();
+                            Arrays.sort(members, new ClanMemberSort());
                             Collections.addAll(ClanMembers, members);
                             ClanMemberAdapter.notifyDataSetChanged();
                         }
