@@ -34,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +45,7 @@ import java.util.regex.Pattern;
 import bnetp.*;
 import bnetp.clan.ClanMember;
 import bnetp.friend.FriendEntry;
+import bnetp.friend.FriendSort;
 import la.ggu.m16.m16chat.cv.ChanAdapter;
 import la.ggu.m16.m16chat.cv.ChatAdapter;
 import la.ggu.m16.m16chat.cv.FriendAdapter;
@@ -291,6 +294,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     public void run() {
                         if (Friends != null && FriendAdapter != null) {
                             Friends.clear();
+                            Arrays.sort(entries, new FriendSort());
                             Collections.addAll(Friends, entries);
                             FriendAdapter.notifyDataSetChanged();
                         }
@@ -368,7 +372,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_chat, menu);
         return true;
     }
@@ -492,7 +495,13 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             friend_user_list.setVisibility(ListView.VISIBLE);
         }
         if (v.getId() == chat_menu_tab_clan.getId()) {
-            BNetProtocol.sendClanMemberList();
+//            BNetProtocol.sendClanMemberList();
+            //TODO: Development from Server
+            ClanMembers.clear();
+            ClanMembers.add(new ClanMember("준비 중입니다.", (byte) 0x00, (byte) 0x00, "개발"));
+            ClanMemberAdapter.notifyDataSetChanged();
+            //TODO: Development from Server
+
             friend_user_list.setVisibility(ListView.INVISIBLE);
             channel_user_list.setVisibility(ListView.INVISIBLE);
             clan_user_list.setVisibility(ListView.VISIBLE);
