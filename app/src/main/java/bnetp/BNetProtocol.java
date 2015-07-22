@@ -40,8 +40,7 @@ public class BNetProtocol extends Thread implements Runnable {
 
     protected Socket makeSocket(String address, int port) throws UnknownHostException, IOException {
         Socket s;
-        InetAddress addr = InetAddress.getByName(address);
-        s = new Socket(addr, port);
+        s = new Socket(address, port);
         s.setKeepAlive(true);
         return s;
     }
@@ -59,7 +58,7 @@ public class BNetProtocol extends Thread implements Runnable {
         if(mBNetProtocolInterface != null) {
             this.mBNetProtocolInterface.startChat();
         }
-        socket = makeSocket("119.194.195.251", 5004);
+        socket = makeSocket("m16-chat.ggu.la", 5004);
         BNInputStream = new BNetInputStream(socket.getInputStream());
         BNetOutputStream = new DataOutputStream(socket.getOutputStream());
 
