@@ -58,7 +58,7 @@ public class BNetProtocol extends Thread implements Runnable {
         if(mBNetProtocolInterface != null) {
             this.mBNetProtocolInterface.startChat();
         }
-        socket = makeSocket("m16-chat.ggu.la", 5004);
+        socket = makeSocket("m16-chat.ggu.la", 6112);
         BNInputStream = new BNetInputStream(socket.getInputStream());
         BNetOutputStream = new DataOutputStream(socket.getOutputStream());
 
@@ -413,6 +413,10 @@ public class BNetProtocol extends Thread implements Runnable {
 
     public void sendFriendsList() {
         try {
+            if (mBNetProtocolInterface != null) {
+                this.mBNetProtocolInterface.throwError("서버와 연결이 되지않았어요.");
+                return;
+            }
             BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_FRIENDSLIST);
             p.sendPacket(BNetOutputStream);
         } catch (IOException e) {
@@ -422,6 +426,10 @@ public class BNetProtocol extends Thread implements Runnable {
 
     public void sendClanMemberList() {
         try {
+            if (mBNetProtocolInterface != null) {
+                this.mBNetProtocolInterface.throwError("서버와 연결이 되지않았어요.");
+                return;
+            }
             BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANMEMBERLIST);
             p.writeDWord(1);
             p.sendPacket(BNetOutputStream);
@@ -432,6 +440,12 @@ public class BNetProtocol extends Thread implements Runnable {
 
     public void sendChatCommand (String data) {
         try {
+            if (socket == null || socket.isClosed()) {
+                if (mBNetProtocolInterface != null) {
+                    this.mBNetProtocolInterface.throwError("서버와 연결이 되지않았어요.");
+                    return;
+                }
+            }
             BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CHATCOMMAND);
             p.writeNTString(data);
             p.sendPacket(BNetOutputStream);
