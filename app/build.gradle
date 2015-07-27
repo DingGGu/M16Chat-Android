@@ -8,8 +8,8 @@ android {
         applicationId "la.ggu.m16.m16chat"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 14
-        versionName "1.4"
+        versionCode 15
+        versionName "1.5"
     }
     buildTypes {
         release {

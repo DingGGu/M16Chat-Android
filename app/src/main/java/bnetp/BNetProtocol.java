@@ -413,9 +413,11 @@ public class BNetProtocol extends Thread implements Runnable {
 
     public void sendFriendsList() {
         try {
-            if (mBNetProtocolInterface != null) {
-                this.mBNetProtocolInterface.throwError("서버와 연결이 되지않았어요.");
-                return;
+            if (socket == null || socket.isClosed()) {
+                if (mBNetProtocolInterface != null) {
+                    this.mBNetProtocolInterface.throwError("서버와 연결이 되지않았어요.");
+                    return;
+                }
             }
             BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_FRIENDSLIST);
             p.sendPacket(BNetOutputStream);
@@ -426,9 +428,11 @@ public class BNetProtocol extends Thread implements Runnable {
 
     public void sendClanMemberList() {
         try {
-            if (mBNetProtocolInterface != null) {
-                this.mBNetProtocolInterface.throwError("서버와 연결이 되지않았어요.");
-                return;
+            if (socket == null || socket.isClosed()) {
+                if (mBNetProtocolInterface != null) {
+                    this.mBNetProtocolInterface.throwError("서버와 연결이 되지않았어요.");
+                    return;
+                }
             }
             BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANMEMBERLIST);
             p.writeDWord(1);
