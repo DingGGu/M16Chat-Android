@@ -1,9 +1,5 @@
 package bnetp;
 
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
@@ -314,8 +310,9 @@ public class BNetProtocol extends Thread implements Runnable {
                             break;
                         }
                         case EID_SHOWUSER:{
+                            statstr = is.readStatString();
                             if(mBNetProtocolInterface != null) {
-                                mBNetChannelUser = new BNetChannelUser(eid, username);
+                                mBNetChannelUser = new BNetChannelUser(eid, username, statstr);
                                 this.mBNetProtocolInterface.addChannelUser(mBNetChannelUser);
                             }
                             break;
@@ -349,8 +346,9 @@ public class BNetProtocol extends Thread implements Runnable {
                             break;
                         }
                         case EID_JOIN: {
+                            statstr = is.readStatString();
                             if(mBNetProtocolInterface != null) {
-                                mBNetChannelUser = new BNetChannelUser(eid, username);
+                                mBNetChannelUser = new BNetChannelUser(eid, username, statstr);
                                 this.mBNetProtocolInterface.addChannelUser(mBNetChannelUser);
                                 mBNetChatMessage = new BNetChatMessage(eid, username);
                                 this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
@@ -359,7 +357,7 @@ public class BNetProtocol extends Thread implements Runnable {
                         }
                         case EID_LEAVE: {
                             if(mBNetProtocolInterface != null) {
-                                mBNetChannelUser = new BNetChannelUser(eid, username);
+                                mBNetChannelUser = new BNetChannelUser(eid, username, statstr);
                                 this.mBNetProtocolInterface.delChannelUser(mBNetChannelUser);
                                 mBNetChatMessage = new BNetChatMessage(eid, username);
                                 this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);

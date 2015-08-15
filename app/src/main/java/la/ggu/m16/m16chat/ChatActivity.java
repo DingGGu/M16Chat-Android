@@ -7,8 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +14,6 @@ import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,10 +32,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
@@ -122,10 +117,12 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         friend_user_list = (ListView) findViewById(R.id.friend_user_list);
         FriendAdapter = new FriendAdapter(this, R.id.channel_user_list_item, Friends);
         friend_user_list.setAdapter(FriendAdapter);
+        friend_user_list.setOnItemClickListener(new FriendUserClickListener());
 
         clan_user_list = (ListView) findViewById(R.id.clan_user_list);
         ClanMemberAdapter = new ClanMemberAdapter(this, R.id.channel_user_list_item, ClanMembers);
         clan_user_list.setAdapter(ClanMemberAdapter);
+        clan_user_list.setOnItemClickListener(new ClanUserClickListner());
 
         chat_menu_channel = (LinearLayout) findViewById(R.id.chat_menu_channel);
         chat_menu_channel.setOnClickListener(this);
@@ -176,7 +173,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             @Override
             public void startChat() {
                 if (THREAD_COUNT > 2) {
-                    this.throwError("잠시 후 다시 시도해주세요.");
+                    this.throwError("잠시 후 다시 시도해주세요.\n (서버 문제일 수도 있으니 홈페이지를 확인하세요)");
                 }
                 THREAD_COUNT = THREAD_COUNT + 1;
             }
@@ -426,6 +423,111 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                 }
             }
         });
+
+        Builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog Alert = Builder.create();
+        Alert.show();
+
+        chat_activity.closeDrawer(chat_drawer);
+    }
+
+    private class FriendUserClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            FriendUserSelectItem(position);
+        }
+    }
+
+    private void FriendUserSelectItem(int position) {
+        final FriendEntry FriendUsersItem = Friends.get(position);
+
+        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "정보 (/finger)", "친구 등급 올리기 (/f p)", "친구 등급 낮추기 (/f d)", "친구 목록에서 지우기 (/f r)"};
+        AlertDialog.Builder Builder = new AlertDialog.Builder(this);
+        final String ItemUserName = FriendUsersItem.account;
+        Builder.setTitle(ItemUserName);
+        Builder.setItems(DialogFunctions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        chat_spinner.setSelection(2);
+                        chat_edittext.setText("/w " + ItemUserName + " ");
+                        break;
+                    case 1:
+                        BNetProtocol.sendChatCommand("/finger " + ItemUserName);
+                        break;
+                    case 2:
+                        BNetProtocol.sendChatCommand("/f p " + ItemUserName);
+                        BNetProtocol.sendFriendsList();
+                        break;
+                    case 3:
+                        BNetProtocol.sendChatCommand("/f d " + ItemUserName);
+                        BNetProtocol.sendFriendsList();
+                        break;
+                    case 4:
+                        BNetProtocol.sendChatCommand("/f r " + ItemUserName);
+                        BNetProtocol.sendFriendsList();
+                        break;
+                }
+            }
+        });
+        Builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog Alert = Builder.create();
+        Alert.show();
+
+        chat_activity.closeDrawer(chat_drawer);
+    }
+
+    private class ClanUserClickListner implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            ClanUserSelectItem(position);
+        }
+    }
+
+    private void ClanUserSelectItem(int position) {
+        final ClanMember ClanUsersItem = ClanMembers.get(position);
+
+        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "정보 (/finger)", "친구 등급 올리기 (/f p)", "친구 등급 낮추기 (/f d)", "친구 목록에서 지우기 (/f r)"};
+        AlertDialog.Builder Builder = new AlertDialog.Builder(this);
+        final String ItemUserName = ClanUsersItem.username;
+        Builder.setTitle(ItemUserName);
+        Builder.setItems(DialogFunctions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        chat_spinner.setSelection(2);
+                        chat_edittext.setText("/w " + ItemUserName + " ");
+                        break;
+                    case 1:
+                        BNetProtocol.sendChatCommand("/finger " + ItemUserName);
+                        break;
+                    case 2:
+                        BNetProtocol.sendChatCommand("/f p " + ItemUserName);
+                        BNetProtocol.sendFriendsList();
+                        break;
+                    case 3:
+                        BNetProtocol.sendChatCommand("/f d " + ItemUserName);
+                        BNetProtocol.sendFriendsList();
+                        break;
+                    case 4:
+                        BNetProtocol.sendChatCommand("/f r " + ItemUserName);
+                        BNetProtocol.sendFriendsList();
+                        break;
+                }
+            }
+        });
         Builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -473,10 +575,10 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             String ALARM_TOGGLE = PreferencesControl.getInstance(this).get(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, null);
             if (ALARM_TOGGLE.equals(PreferencesControl.ALARM_ON)) {
                 PreferencesControl.getInstance(this).set(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, PreferencesControl.ALARM_OFF);
-                Toast.makeText(this, "닉 언급 알람을 해제했어요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "닉네임 언급 알람을 해제했어요.", Toast.LENGTH_SHORT).show();
             } else {
                 PreferencesControl.getInstance(this).set(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, PreferencesControl.ALARM_ON);
-                Toast.makeText(this, "닉 언급 알람을 설정했어요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "닉네임 언급 알람을 설정했어요.", Toast.LENGTH_SHORT).show();
             }
         }
         if (v.getId() == chat_menu_clear.getId()) {

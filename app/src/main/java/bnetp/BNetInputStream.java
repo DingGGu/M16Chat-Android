@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import bnetp.util.StatString;
+
 public class BNetInputStream extends DataInputStream {
     public BNetInputStream(InputStream in) {
         super(in);
@@ -79,6 +81,10 @@ public class BNetInputStream extends DataInputStream {
         long qw2 = readDWord() & 0xFFFFFFFFl;
         qw |= (qw2 << 32l);
         return qw;
+    }
+
+    public StatString readStatString() {
+        return new StatString(this);
     }
 
     public String readCommaTermString() throws IOException {
