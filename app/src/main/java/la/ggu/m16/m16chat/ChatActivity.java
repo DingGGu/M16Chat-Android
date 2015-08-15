@@ -4,9 +4,13 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -122,7 +126,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         clan_user_list = (ListView) findViewById(R.id.clan_user_list);
         ClanMemberAdapter = new ClanMemberAdapter(this, R.id.channel_user_list_item, ClanMembers);
         clan_user_list.setAdapter(ClanMemberAdapter);
-        clan_user_list.setOnItemClickListener(new ClanUserClickListner());
+        clan_user_list.setOnItemClickListener(new ClanUserClickListener());
 
         chat_menu_channel = (LinearLayout) findViewById(R.id.chat_menu_channel);
         chat_menu_channel.setOnClickListener(this);
@@ -251,6 +255,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                                 case EID_TALK:
                                 case EID_WHISPER: {
                                     String ALARM_TOGGLE = PreferencesControl.getInstance(ChatActivity.this).get(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, null);
+                                    Uri ALARM_SOUND = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getPackageName() + "/" + R.raw.alarm);
+                                    long [] ALARM_VIBRATE = {0, 100};
                                     if (ALARM_TOGGLE.equals(PreferencesControl.ALARM_OFF))
                                         break;
                                     if (obj.message.toLowerCase().contains(uniqueUserName.toLowerCase())) { //알림
@@ -263,13 +269,17 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                                                             .setContentTitle(obj.username + " 님이 언급했어요.")
                                                             .setContentText(obj.message)
                                                             .setAutoCancel(true)
-                                                            .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
+                                                            .setDefaults(Notification.DEFAULT_LIGHTS)
+                                                            .setVibrate(ALARM_VIBRATE)
+                                                            .setSound(ALARM_SOUND)
                                                             .setContentIntent(pendingintent);
                                             mNotificationManager.notify(0, mBuilder.build());
                                         } else {
                                             Notification notification = new Notification(R.drawable.ic_m16_chat, obj.username + "님이 언급했어요.", System.currentTimeMillis());
                                             notification.flags = Notification.FLAG_AUTO_CANCEL;
-                                            notification.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+                                            notification.defaults = Notification.DEFAULT_LIGHTS;
+                                            notification.sound = ALARM_SOUND;
+                                            notification.vibrate = ALARM_VIBRATE;
                                             notification.setLatestEventInfo(ChatActivity.this, obj.username + "님이 언급했어요.", "", pendingintent);
                                             mNotificationManager.notify(0, notification);
                                         }
@@ -488,7 +498,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         chat_activity.closeDrawer(chat_drawer);
     }
 
-    private class ClanUserClickListner implements AdapterView.OnItemClickListener {
+    private class ClanUserClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             ClanUserSelectItem(position);
@@ -498,7 +508,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private void ClanUserSelectItem(int position) {
         final ClanMember ClanUsersItem = ClanMembers.get(position);
 
-        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "정보 (/finger)", "친구 등급 올리기 (/f p)", "친구 등급 낮추기 (/f d)", "친구 목록에서 지우기 (/f r)"};
+        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "정보 (/finger)"};
         AlertDialog.Builder Builder = new AlertDialog.Builder(this);
         final String ItemUserName = ClanUsersItem.username;
         Builder.setTitle(ItemUserName);
@@ -512,18 +522,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         break;
                     case 1:
                         BNetProtocol.sendChatCommand("/finger " + ItemUserName);
-                        break;
-                    case 2:
-                        BNetProtocol.sendChatCommand("/f p " + ItemUserName);
-                        BNetProtocol.sendFriendsList();
-                        break;
-                    case 3:
-                        BNetProtocol.sendChatCommand("/f d " + ItemUserName);
-                        BNetProtocol.sendFriendsList();
-                        break;
-                    case 4:
-                        BNetProtocol.sendChatCommand("/f r " + ItemUserName);
-                        BNetProtocol.sendFriendsList();
                         break;
                 }
             }
