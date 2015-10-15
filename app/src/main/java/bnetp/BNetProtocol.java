@@ -34,6 +34,8 @@ public class BNetProtocol extends Thread implements Runnable {
 
     private String uniqueUserName;
 
+    private boolean KEEP_THREAD = true;
+
     protected Socket makeSocket(String address, int port) throws UnknownHostException, IOException {
         Socket s;
         s = new Socket(address, port);
@@ -51,7 +53,7 @@ public class BNetProtocol extends Thread implements Runnable {
     }
 
     public void BNetConnect() throws Exception {
-        if(mBNetProtocolInterface != null) {
+        if (mBNetProtocolInterface != null) {
             this.mBNetProtocolInterface.startChat();
         }
         socket = makeSocket("m16-chat.ggu.la", 6112);
@@ -168,12 +170,12 @@ public class BNetProtocol extends Thread implements Runnable {
                         if (result != 0) {
                             switch (result) {
                                 case 0x201:
-                                    if(mBNetProtocolInterface != null) {
+                                    if (mBNetProtocolInterface != null) {
                                         this.mBNetProtocolInterface.throwError("서버에서 밴 되었어요." + extraInfo);
                                     }
                                     break;
                                 default:
-                                    if(mBNetProtocolInterface != null) {
+                                    if (mBNetProtocolInterface != null) {
                                         this.mBNetProtocolInterface.throwError("알 수 없는 오류: " + Integer.toHexString(result));
                                     }
                                     break;
@@ -185,7 +187,7 @@ public class BNetProtocol extends Thread implements Runnable {
                     } else {
                         if (result != 2) {
                             disconnect();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 this.mBNetProtocolInterface.throwError("올바르지 않은 접근이에요." + extraInfo);
                             }
                             break;
@@ -206,25 +208,25 @@ public class BNetProtocol extends Thread implements Runnable {
                             break;
                         case 0x01:
                             disconnect();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 this.mBNetProtocolInterface.throwError("올바르지 않은 아이디에요.");
                             }
                             break;
                         case 0x02:
                             disconnect();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 this.mBNetProtocolInterface.throwError("비밀번호가 틀렸어요.");
                             }
                             break;
                         case 0x06:
                             disconnect();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 this.mBNetProtocolInterface.throwError("아이디가 잠겨있어요.");
                             }
                             break;
                         default:
                             disconnect();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 this.mBNetProtocolInterface.throwError("알 수 없는 오류.");
                             }
                             break;
@@ -233,7 +235,7 @@ public class BNetProtocol extends Thread implements Runnable {
                 }
 
                 case SID_ENTERCHAT: {
-                    if(mBNetProtocolInterface != null) {
+                    if (mBNetProtocolInterface != null) {
                         uniqueUserName = is.readNTString();
                         this.mBNetProtocolInterface.initUserInfo(uniqueUserName);
                     }
@@ -302,16 +304,16 @@ public class BNetProtocol extends Thread implements Runnable {
                     StatString statstr = null;
 
                     switch (eid) {
-                        case EID_CHANNEL:{
-                            if(mBNetProtocolInterface != null) {
+                        case EID_CHANNEL: {
+                            if (mBNetProtocolInterface != null) {
                                 String channel = is.readNTString();
                                 this.mBNetProtocolInterface.clearChannelUser(channel);
                             }
                             break;
                         }
-                        case EID_SHOWUSER:{
+                        case EID_SHOWUSER: {
                             statstr = is.readStatString();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 mBNetChannelUser = new BNetChannelUser(eid, username, statstr);
                                 this.mBNetProtocolInterface.addChannelUser(mBNetChannelUser);
                             }
@@ -321,7 +323,7 @@ public class BNetProtocol extends Thread implements Runnable {
                         case EID_ERROR:
                         case EID_INFO: {
                             String message = is.readNTString();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 mBNetChatMessage = new BNetChatMessage(eid, username, message);
                                 this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
@@ -329,7 +331,7 @@ public class BNetProtocol extends Thread implements Runnable {
                         }
                         case EID_BROADCAST: {
                             String message = is.readNTString();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 mBNetChatMessage = new BNetChatMessage(eid, username, message);
                                 this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
@@ -339,7 +341,7 @@ public class BNetProtocol extends Thread implements Runnable {
                         case EID_WHISPERSENT:
                         case EID_TALK: {
                             String message = is.readNTString();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 mBNetChatMessage = new BNetChatMessage(eid, username, message, flags);
                                 this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                             }
@@ -347,7 +349,7 @@ public class BNetProtocol extends Thread implements Runnable {
                         }
                         case EID_JOIN: {
                             statstr = is.readStatString();
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 mBNetChannelUser = new BNetChannelUser(eid, username, statstr);
                                 this.mBNetProtocolInterface.addChannelUser(mBNetChannelUser);
                                 mBNetChatMessage = new BNetChatMessage(eid, username);
@@ -356,7 +358,7 @@ public class BNetProtocol extends Thread implements Runnable {
                             break;
                         }
                         case EID_LEAVE: {
-                            if(mBNetProtocolInterface != null) {
+                            if (mBNetProtocolInterface != null) {
                                 mBNetChannelUser = new BNetChannelUser(eid, username, statstr);
                                 this.mBNetProtocolInterface.delChannelUser(mBNetChannelUser);
                                 mBNetChatMessage = new BNetChatMessage(eid, username);
@@ -371,7 +373,7 @@ public class BNetProtocol extends Thread implements Runnable {
                     byte numEntries = is.readByte();
                     FriendEntry[] entries = new FriendEntry[numEntries];
 
-                    for(int i = 0; i < numEntries; i++) {
+                    for (int i = 0; i < numEntries; i++) {
                         String uAccount = is.readNTString();
                         byte uStatus = is.readByte();
                         byte uLocation = is.readByte();
@@ -392,7 +394,7 @@ public class BNetProtocol extends Thread implements Runnable {
                     byte numMembers = is.readByte();
                     ClanMember[] members = new ClanMember[numMembers];
 
-                    for(int i = 0; i < numMembers; i++) {
+                    for (int i = 0; i < numMembers; i++) {
                         String uName = is.readNTString();
                         byte uRank = is.readByte();
                         byte uOnline = is.readByte();
@@ -440,7 +442,7 @@ public class BNetProtocol extends Thread implements Runnable {
         }
     }
 
-    public void sendChatCommand (String data) {
+    public void sendChatCommand(String data) {
         try {
             if (socket == null || socket.isClosed()) {
                 if (mBNetProtocolInterface != null) {
@@ -456,7 +458,7 @@ public class BNetProtocol extends Thread implements Runnable {
         }
     }
 
-    public String getUsername () {
+    public String getUsername() {
         return this.uniqueUserName;
     }
 
@@ -474,7 +476,7 @@ public class BNetProtocol extends Thread implements Runnable {
 
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted() && KEEP_THREAD) {
             try {
                 BNetConnect();
                 BNetLogin();
@@ -485,6 +487,6 @@ public class BNetProtocol extends Thread implements Runnable {
     }
 
     public void InterruptThread() {
-        this.interrupt();
+        KEEP_THREAD = false;
     }
 }
