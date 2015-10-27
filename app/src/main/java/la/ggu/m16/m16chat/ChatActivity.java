@@ -8,11 +8,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
@@ -27,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -34,6 +34,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,10 +45,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 import bnetp.*;
+import bnetp.clan.ClanInvitationResponse;
 import bnetp.clan.ClanMember;
 import bnetp.clan.ClanMemberSort;
 import bnetp.friend.FriendEntry;
 import bnetp.friend.FriendSort;
+import bnetp.util.HexDump;
 import la.ggu.m16.m16chat.cv.ChanAdapter;
 import la.ggu.m16.m16chat.cv.ChatAdapter;
 import la.ggu.m16.m16chat.cv.FriendAdapter;
@@ -70,6 +75,14 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private ListView chat_view;
     private ArrayList<BNetChatMessage> ChatItems = new ArrayList<BNetChatMessage>();
     private ChatAdapter ChatAdapter;
+
+    private FrameLayout accept_box_wrap;
+    private TextView s_request_text;
+    private TextView s_request_countdown;
+    private Button s_request_accept_btn;
+    private Button s_request_decline_btn;
+    private ClanInvitationResponse CLAN_INVITATION_RES = null;
+
     private Spinner chat_spinner;
     private EditText chat_edittext;
     private Button chat_submit;
@@ -92,6 +105,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private Handler mFriendEntryHandler = new Handler();
     private Handler mClanMemberHandler = new Handler();
     private Handler BackPressedHandler = new Handler();
+    private Handler sRequestLayoutHandler = new sRequestLayoutHandler(this);
     private Handler errorHandler;
 
     private NotificationManager mNotificationManager;
@@ -145,6 +159,14 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         chat_view = (ListView) findViewById(R.id.chat_view);
         ChatAdapter = new ChatAdapter(this, R.layout.custom_chat, ChatItems);
         chat_view.setAdapter(ChatAdapter);
+
+        accept_box_wrap = (FrameLayout) findViewById(R.id.accept_box_wrap);
+        s_request_text = (TextView) findViewById(R.id.s_request_text);
+        s_request_countdown = (TextView) findViewById(R.id.s_request_countdown);
+        s_request_accept_btn = (Button) findViewById(R.id.s_request_accept_btn);
+        s_request_accept_btn.setOnClickListener(this);
+        s_request_decline_btn = (Button) findViewById(R.id.s_request_decline_btn);
+        s_request_decline_btn.setOnClickListener(this);
 
         chat_spinner = (Spinner) findViewById(R.id.chat_spinner);
         chat_spinner.setAdapter(new ArrayAdapter<String>(this, R.layout.chat_spinner,
@@ -326,10 +348,32 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             }
 
             @Override
+            public void receiveClanInvitation(int cookie, int clanTag, String clanName, String inviter) {
+                CLAN_INVITATION_RES = new ClanInvitationResponse(cookie, clanTag, clanName, inviter);
+
+                String message = inviter + "님이 클랜에 초대하였습니다.\n" + "[Clan " + HexDump.DWordToPretty(clanTag) + "] " + clanName;
+                final BNetChatMessage obj = new BNetChatMessage(BNetChatEventId.EID_INFO, inviter, message);
+                mChatHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ChatItems != null && ChatAdapter != null) {
+                            ChatItems.add(obj);
+                            ChatAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+
+                Message msg = new Message();
+                msg.obj = message;
+                sRequestLayoutHandler.sendMessage(msg);
+            }
+
+            @Override
             public void throwError(final String s) {
                 Message msg = new Message();
                 msg.obj = s;
                 errorHandler.handleMessage(msg);
+                BNetProtocol.InterruptThread();
                 ChatThread.interrupt();
                 finish();
             }
@@ -604,6 +648,28 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             clan_user_list.setVisibility(ListView.VISIBLE);
 
         }
+
+        if (v.getId() == s_request_accept_btn.getId()) {
+            if (CLAN_INVITATION_RES != null) {
+                BNetProtocol.sendResponseClanInvitation(
+                        CLAN_INVITATION_RES.cookie,
+                        CLAN_INVITATION_RES.clanTag,
+                        CLAN_INVITATION_RES.inviter,
+                        6); //decline code: 6
+            }
+            accept_box_wrap.setVisibility(FrameLayout.INVISIBLE);
+        }
+
+        if (v.getId() == s_request_decline_btn.getId()) {
+            if (CLAN_INVITATION_RES != null) {
+                BNetProtocol.sendResponseClanInvitation(
+                        CLAN_INVITATION_RES.cookie,
+                        CLAN_INVITATION_RES.clanTag,
+                        CLAN_INVITATION_RES.inviter,
+                        4); //decline code: 4
+            }
+            accept_box_wrap.setVisibility(FrameLayout.INVISIBLE);
+        }
     }
 
     public void chatSendMessage() {
@@ -654,6 +720,34 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             BNetProtocol.InterruptThread();
             ChatThread.interrupt();
             super.onBackPressed();
+        }
+    }
+
+    private static class sRequestLayoutHandler extends Handler {
+        private final WeakReference<ChatActivity> mActivity;
+
+        public sRequestLayoutHandler(ChatActivity activity) {
+            mActivity = new WeakReference<ChatActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(final Message msg) {
+            final ChatActivity activity = mActivity.get();
+
+            if (activity != null) {
+                new CountDownTimer(30000, 1000) {
+                    public void onTick(long sec) {
+                        activity.s_request_countdown.setText(sec/1000 + "s");
+                    }
+
+                    public void onFinish() {
+                        activity.accept_box_wrap.setVisibility(FrameLayout.INVISIBLE);
+                    }
+                }.start();
+                activity.s_request_text.setText((String) msg.obj);
+                activity.accept_box_wrap.setVisibility(FrameLayout.VISIBLE);
+
+            }
         }
     }
 }

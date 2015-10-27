@@ -18,4 +18,6 @@ public interface BNetProtocolInterface {
     void dispatchFriendList(FriendEntry[] entries);
 
     void dispatchClanMembers(ClanMember[] members);
+
+    void receiveClanInvitation(int cookie, int clanTag, String clanName, String inviter);
 }

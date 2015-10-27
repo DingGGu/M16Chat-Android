@@ -16,15 +16,60 @@
             android:layout_marginBottom="55dp"
             android:transcriptMode="normal" />
 
+        <FrameLayout
+            android:id="@+id/accept_box_wrap"
+            android:layout_above="@+id/chat_write_wrap"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/chat_border_top"
+            android:visibility="invisible">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="6dp">
+                <TextView
+                    android:id="@+id/s_request_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:paddingLeft="6dp"/>
+                <TextView
+                    android:id="@+id/s_request_countdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:layout_toLeftOf="@+id/s_request_accept_btn"
+                    android:layout_marginRight="6dp"/>
+                <Button
+                    android:id="@+id/s_request_accept_btn"
+                    android:layout_width="60dp"
+                    android:layout_height="fill_parent"
+                    android:background="#005d2b"
+                    android:text="수락"
+                    android:textColor="@color/white"
+                    android:layout_marginRight="6dp"
+                    android:layout_toLeftOf="@+id/s_request_decline_btn" />
+                <Button
+                    android:id="@+id/s_request_decline_btn"
+                    android:layout_width="60dp"
+                    android:layout_height="fill_parent"
+                    android:background="#8B332D"
+                    android:text="거절"
+                    android:textColor="@color/white"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+        </FrameLayout>
+
         <LinearLayout
+            android:id="@+id/chat_write_wrap"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@drawable/chat_border_top"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:padding="6dp"
-            android:orientation="horizontal">
+            android:background="@drawable/chat_border_top"
+            android:orientation="horizontal"
+            android:padding="6dp">
 
             <Spinner
                 android:id="@+id/chat_spinner"
@@ -32,18 +77,18 @@
                 android:layout_height="32dp"
                 android:layout_gravity="center_vertical|center"
                 android:layout_weight="15"
-                android:textColor="@color/white"
                 android:background="@color/bg_main"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textColor="@color/white" />
 
             <EditText
                 android:id="@+id/chat_edittext"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="70"
+                android:background="@color/white"
                 android:imeOptions="actionSend|flagNoExtractUi"
                 android:inputType="text"
-                android:background="@color/white"
                 android:paddingLeft="8dp"
                 android:paddingRight="4dp"
                 android:singleLine="true" />
@@ -53,9 +98,9 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="15"
-                android:textColor="@color/white"
                 android:background="@color/bg_main"
-                android:text="전송" />
+                android:text="전송"
+                android:textColor="@color/white" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -63,137 +108,155 @@
         android:id="@+id/chat_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:background="#FFFFFF"
-        android:layout_gravity="right">
+        android:layout_gravity="right"
+        android:background="#FFFFFF">
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:orientation="horizontal"
                 android:background="@drawable/chat_border_bottom"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/chat_menu_channel"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
                     android:layout_weight="33.33"
-                    android:padding="10dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/chat_menu_channel"
-                        android:contentDescription="channel" />
+                        android:contentDescription="channel"
+                        android:src="@drawable/chat_menu_channel" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="14sp"
+                        android:text="채널 변경"
                         android:textColor="#666"
-                        android:text="채널 변경"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/chat_menu_alarm"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
                     android:layout_weight="33.33"
-                    android:padding="10dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/chat_menu_alarm"
-                        android:contentDescription="alarm" />
+                        android:contentDescription="alarm"
+                        android:src="@drawable/chat_menu_alarm" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="14sp"
+                        android:text="알림"
                         android:textColor="#666"
-                        android:text="알림"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/chat_menu_clear"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
                     android:layout_weight="33.33"
-                    android:padding="10dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/chat_menu_clear"
-                        android:contentDescription="clear" />
+                        android:contentDescription="clear"
+                        android:src="@drawable/chat_menu_clear" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="14sp"
+                        android:text="청소"
                         android:textColor="#666"
-                        android:text="청소"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
                 android:background="@drawable/chat_menu_border_bottom">
+
                 <Button
                     android:id="@+id/chat_menu_tab_channel"
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_weight="33.33"
+                    android:background="@android:color/transparent"
                     android:gravity="center|center_vertical"
                     android:text="채널"
-                    android:textColor="@color/black"
-                    android:background="@android:color/transparent"/>
+                    android:textColor="@color/black" />
+
                 <Button
                     android:id="@+id/chat_menu_tab_friend"
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_weight="33.33"
+                    android:background="@android:color/transparent"
                     android:gravity="center|center_vertical"
                     android:text="친구"
-                    android:textColor="@color/black"
-                    android:background="@android:color/transparent"/>
+                    android:textColor="@color/black" />
+
                 <Button
                     android:id="@+id/chat_menu_tab_clan"
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_weight="33.33"
+                    android:background="@android:color/transparent"
                     android:gravity="center|center_vertical"
                     android:text="클랜"
-                    android:textColor="@color/black"
-                    android:background="@android:color/transparent"/>
+                    android:textColor="@color/black" />
             </LinearLayout>
+
             <FrameLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
+
                 <ListView
                     android:id="@+id/clan_user_list"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical"
-                    android:background="#f0f0f0"/>
+                    android:background="#f0f0f0"
+                    android:orientation="vertical" />
+
                 <ListView
                     android:id="@+id/friend_user_list"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical"
-                    android:background="#f0f0f0"/>
+                    android:background="#f0f0f0"
+                    android:orientation="vertical" />
+
                 <ListView
                     android:id="@+id/channel_user_list"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical"
-                    android:background="#f0f0f0"/>
+                    android:background="#f0f0f0"
+                    android:orientation="vertical" />
             </FrameLayout>
         </LinearLayout>
     </RelativeLayout>

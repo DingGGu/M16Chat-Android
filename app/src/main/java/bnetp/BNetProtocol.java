@@ -407,6 +407,18 @@ public class BNetProtocol extends Thread implements Runnable {
                     }
                     break;
                 }
+
+                case SID_CLANINVITATIONRESPONSE: {
+                    int cookie = is.readDWord();
+                    int clanTag = is.readDWord();
+                    String clanName = is.readNTString();
+                    String inviter = is.readNTString();
+
+                    if (mBNetProtocolInterface != null) {
+                        this.mBNetProtocolInterface.receiveClanInvitation(cookie, clanTag, clanName, inviter);
+                    }
+                    break;
+                }
             }
         }
     }
@@ -453,6 +465,20 @@ public class BNetProtocol extends Thread implements Runnable {
             BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CHATCOMMAND);
             p.writeNTString(data);
             p.sendPacket(BNetOutputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendResponseClanInvitation(int cookie, int clanTag, String inviter, int response) {
+        try {
+            BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANINVITATIONRESPONSE);
+            p.writeDWord(cookie);
+            p.writeDWord(clanTag);
+            p.writeNTString(inviter);
+            p.writeByte(response);
+            p.sendPacket(BNetOutputStream);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
