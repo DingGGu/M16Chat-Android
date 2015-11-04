@@ -20,4 +20,5 @@ public interface BNetProtocolInterface {
     void dispatchClanMembers(ClanMember[] members);
 
     void receiveClanInvitation(int cookie, int clanTag, String clanName, String inviter);
+    void setClanRank(int rank);
 }

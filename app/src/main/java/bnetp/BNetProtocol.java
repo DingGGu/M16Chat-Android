@@ -419,6 +419,31 @@ public class BNetProtocol extends Thread implements Runnable {
                     }
                     break;
                 }
+
+                case SID_CLANINFO: {
+                    is.readByte();
+                    int clanTag = is.readDWord();
+                    int clanRank = is.readByte();
+
+                    if (mBNetProtocolInterface != null) {
+                        this.mBNetProtocolInterface.setClanRank(clanRank);
+                    }
+                    break;
+                }
+
+                case SID_CLANMEMBERSTATUSCHANGE: {
+                    String username = is.readNTString();
+                    int rank = is.readByte();
+                    int status = is.readByte();
+                    String location = is.readNTString();
+
+                    if (uniqueUserName == username) {
+                        if (mBNetProtocolInterface != null) {
+                            this.mBNetProtocolInterface.setClanRank(rank);
+                        }
+                    }
+                    break;
+                }
             }
         }
     }
@@ -479,6 +504,17 @@ public class BNetProtocol extends Thread implements Runnable {
             p.writeByte(response);
             p.sendPacket(BNetOutputStream);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendClanInvitation(String itemUserName) {
+        try {
+            BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANINVITATION);
+            p.writeDWord(1);
+            p.writeNTString(itemUserName);
+            p.sendPacket(BNetOutputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }

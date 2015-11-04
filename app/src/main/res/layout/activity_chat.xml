@@ -32,16 +32,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:paddingLeft="6dp"/>
-                <TextView
-                    android:id="@+id/s_request_countdown"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:gravity="center"
-                    android:layout_toLeftOf="@+id/s_request_accept_btn"
-                    android:layout_marginRight="6dp"/>
                 <Button
                     android:id="@+id/s_request_accept_btn"
-                    android:layout_width="60dp"
+                    android:layout_width="80dp"
                     android:layout_height="fill_parent"
                     android:background="#005d2b"
                     android:text="수락"

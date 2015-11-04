@@ -17,6 +17,7 @@ import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,14 +34,12 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
@@ -78,7 +77,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
     private FrameLayout accept_box_wrap;
     private TextView s_request_text;
-    private TextView s_request_countdown;
     private Button s_request_accept_btn;
     private Button s_request_decline_btn;
     private ClanInvitationResponse CLAN_INVITATION_RES = null;
@@ -95,6 +93,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private int ChannelUsersNum;
     private String ChannelName;
     private String uniqueUserName;
+    private int ClanRank = 0;
     private int THREAD_COUNT;
 
     private Thread ChatThread = null;
@@ -162,7 +161,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
         accept_box_wrap = (FrameLayout) findViewById(R.id.accept_box_wrap);
         s_request_text = (TextView) findViewById(R.id.s_request_text);
-        s_request_countdown = (TextView) findViewById(R.id.s_request_countdown);
         s_request_accept_btn = (Button) findViewById(R.id.s_request_accept_btn);
         s_request_accept_btn.setOnClickListener(this);
         s_request_decline_btn = (Button) findViewById(R.id.s_request_decline_btn);
@@ -369,6 +367,11 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             }
 
             @Override
+            public void setClanRank(int rank) {
+                ClanRank = rank;
+            }
+
+            @Override
             public void throwError(final String s) {
                 Message msg = new Message();
                 msg.obj = s;
@@ -453,7 +456,20 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private void ChanUserSelectItem(int position) {
         final BNetChannelUser ChanUsersItem = ChanUsers.get(position);
 
-        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "정보 (/finger)", "추방 (/kick)", "채널밴 (/ban)"};
+        ArrayList<String> listItems = new ArrayList<>();
+        listItems.add("귓속말 (/w)");
+        listItems.add("정보 (/finger)");
+        listItems.add("추방 (/kick)");
+        listItems.add("채널밴 (/ban)");
+
+        Log.e("ClanRank", String.valueOf(ClanRank));
+
+        if (ClanRank >= 3){
+            listItems.add("클랜 초대");
+        }
+
+        final CharSequence[] DialogFunctions = listItems.toArray(new CharSequence[listItems.size()]);
+
         AlertDialog.Builder Builder = new AlertDialog.Builder(this);
         final String ItemUserName = ParseUsername.parseColor(ChanUsersItem.username);
         Builder.setTitle(ItemUserName);
@@ -473,6 +489,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         break;
                     case 3:
                         BNetProtocol.sendChatCommand("/ban " + ItemUserName);
+                        break;
+                    case 4:
+                        BNetProtocol.sendClanInvitation(ItemUserName);
                         break;
                 }
             }
@@ -737,7 +756,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             if (activity != null) {
                 new CountDownTimer(30000, 1000) {
                     public void onTick(long sec) {
-                        activity.s_request_countdown.setText(sec/1000 + "s");
+                        activity.s_request_accept_btn.setText("수락 ("+ sec/1000 + ")");
                     }
 
                     public void onFinish() {
