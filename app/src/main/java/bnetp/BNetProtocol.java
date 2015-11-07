@@ -439,7 +439,7 @@ public class BNetProtocol extends Thread implements Runnable {
                     int status = is.readByte();
                     String location = is.readNTString();
 
-                    if (uniqueUserName.equals(username.toLowerCase())) {
+                    if (uniqueUserName.toLowerCase().equals(username.toLowerCase())) {
                         if (mBNetProtocolInterface != null) {
                             this.mBNetProtocolInterface.setClanRank(rank);
                         }
