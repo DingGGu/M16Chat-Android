@@ -368,6 +368,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
             @Override
             public void setClanRank(int rank) {
+                Log.e("ClanRank", String.valueOf(rank));
                 ClanRank = rank;
             }
 

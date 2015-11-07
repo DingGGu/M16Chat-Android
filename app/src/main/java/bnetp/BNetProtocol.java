@@ -1,5 +1,7 @@
 package bnetp;
 
+import android.util.Log;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
@@ -437,7 +439,7 @@ public class BNetProtocol extends Thread implements Runnable {
                     int status = is.readByte();
                     String location = is.readNTString();
 
-                    if (uniqueUserName == username) {
+                    if (uniqueUserName.equals(username.toLowerCase())) {
                         if (mBNetProtocolInterface != null) {
                             this.mBNetProtocolInterface.setClanRank(rank);
                         }
