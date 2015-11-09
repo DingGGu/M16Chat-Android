@@ -574,13 +574,15 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private void ClanUserSelectItem(int position) {
         final ClanMember ClanUsersItem = ClanMembers.get(position);
 
-        ArrayList<String> listItems = new ArrayList<>();
+        final ArrayList<String> listItems = new ArrayList<>();
         listItems.add("귓속말 (/w)");
         listItems.add("정보 (/finger)");
         if (ClanRank >= 3) {
             listItems.add("클랜 등급 변경");
             listItems.add("클랜 추방");
         }
+
+
 
         final CharSequence[] DialogFunctions = listItems.toArray(new CharSequence[listItems.size()]);
 
@@ -598,13 +600,90 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                     case 1:
                         BNetProtocol.sendChatCommand("/finger " + ItemUserName);
                         break;
-                    case 2:
-                        break;
-                    case 3:
-                        if (ClanRank >= 3) {
+                    case 2: {
+                        ArrayList<String> listItems2 = new ArrayList<>();
+                        AlertDialog.Builder Builder2 = new AlertDialog.Builder(ChatActivity.this);
+                        Builder2.setTitle(ItemUserName);
+                        switch (ClanRank) {
+                            case 3: {
+                                listItems2.add("그런트");
+                                listItems2.add("피언");
 
+                                final CharSequence[] DialogFunction2 = listItems2.toArray(new CharSequence[listItems2.size()]);
+                                Builder2.setItems(DialogFunction2, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which) {
+                                            case 0:
+                                                BNetProtocol.sendClanRankChange(ItemUserName, 2);
+                                                break;
+                                            case 1:
+                                                BNetProtocol.sendClanRankChange(ItemUserName, 1);
+                                                break;
+                                        }
+                                    }
+                                });
+
+                                break;
+                            }
+                            case 4: {
+                                listItems2.add("샤먼");
+                                listItems2.add("그런트");
+                                listItems2.add("피언");
+
+                                final CharSequence[] DialogFunction2 = listItems2.toArray(new CharSequence[listItems2.size()]);
+                                Builder2.setItems(DialogFunction2, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which) {
+                                            case 0:
+                                                BNetProtocol.sendClanRankChange(ItemUserName, 3);
+                                                break;
+                                            case 1:
+                                                BNetProtocol.sendClanRankChange(ItemUserName, 2);
+                                                break;
+                                            case 2:
+                                                BNetProtocol.sendClanRankChange(ItemUserName, 1);
+                                                break;
+                                        }
+                                    }
+                                });
+                                break;
+                            }
+                        }
+
+                        Builder2.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog Alert2 = Builder2.create();
+                        Alert2.show();
+
+                        break;
+                    }
+                    case 3: {
+                        if (ClanRank >= 3) {
+                            AlertDialog.Builder Builder2 = new AlertDialog.Builder(ChatActivity.this);
+                            Builder2.setMessage("정말 추방시킬거에요?");
+                            Builder2.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    BNetProtocol.sendClanRemoveMember(ClanUsersItem.username);
+                                }
+                            });
+                            Builder2.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog Alert2 = Builder2.create();
+                            Alert2.show();
                         }
                         break;
+                    }
                 }
             }
         });

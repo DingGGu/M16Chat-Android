@@ -447,6 +447,18 @@ public class BNetProtocol extends Thread implements Runnable {
                     }
                     break;
                 }
+
+                case SID_CLANREMOVEMEMBER: {
+                    int cookie = is.readDWord();
+                    int status = is.readByte();
+
+                    if (status == 0) {
+                        if (mBNetProtocolInterface != null) {
+                            mBNetChatMessage = new BNetChatMessage(BNetChatEventId.EID_INFO, null, "성공적으로 클랜에서 추방시켰어요.");
+                            this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
+                        }
+                    }
+                }
             }
         }
     }
@@ -517,6 +529,33 @@ public class BNetProtocol extends Thread implements Runnable {
             BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANINVITATION);
             p.writeDWord(1);
             p.writeNTString(itemUserName);
+            p.sendPacket(BNetOutputStream);
+            if (mBNetProtocolInterface != null) {
+                mBNetChatMessage = new BNetChatMessage(BNetChatEventId.EID_INFO, null, itemUserName + "님을 클랜에 초대했어요.");
+                this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendClanRemoveMember(String itemUserName) {
+        try {
+            BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANREMOVEMEMBER);
+            p.writeDWord(1);
+            p.writeNTString(itemUserName);
+            p.sendPacket(BNetOutputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendClanRankChange(String itemUserName, int newRank) {
+        try {
+            BNetProtocolPacket p = new BNetProtocolPacket(BNetProtocolPacketId.SID_CLANRANKCHANGE);
+            p.writeDWord(1);
+            p.writeNTString(itemUserName);
+            p.writeByte(newRank);
             p.sendPacket(BNetOutputStream);
         } catch (IOException e) {
             e.printStackTrace();
