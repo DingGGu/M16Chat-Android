@@ -34,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -276,13 +277,13 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                                 case EID_WHISPER:
                                 case EID_EMOTE: {
                                     String ALARM_TOGGLE = PreferencesControl.getInstance(ChatActivity.this).get(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, null);
-                                    Uri ALARM_SOUND = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getPackageName() + "/" + R.raw.alarm);
-                                    long [] ALARM_VIBRATE = {0, 100};
+                                    Uri ALARM_SOUND = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/" + R.raw.alarm);
+                                    long[] ALARM_VIBRATE = {0, 100};
                                     if (ALARM_TOGGLE.equals(PreferencesControl.ALARM_OFF))
                                         break;
                                     if (obj.message.toLowerCase().contains(uniqueUserName.toLowerCase())) { //알림
                                         PendingIntent pendingintent = PendingIntent.getActivity(ChatActivity.this, 0, new Intent(ChatActivity.this, ChatActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                                        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+                                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
                                             NotificationCompat.Builder mBuilder =
                                                     new NotificationCompat.Builder(ChatActivity.this)
                                                             .setSmallIcon(R.drawable.ic_m16_chat)
@@ -466,7 +467,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
         Log.e("Clan", String.valueOf(ChanUsersItem.statstr.checkClan()));
 
-        if (ClanRank >= 3 && ChanUsersItem.statstr.checkClan()){
+        if (ClanRank >= 3 && ChanUsersItem.statstr.checkClan()) {
             listItems.add("클랜 초대");
         }
 
@@ -577,11 +578,11 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         final ArrayList<String> listItems = new ArrayList<>();
         listItems.add("귓속말 (/w)");
         listItems.add("정보 (/finger)");
-        if (ClanRank >= 3 && ClanUsersItem.rank <= 2) {
+        if (ClanRank >= 3 && ClanUsersItem.rank <= 3) {
             listItems.add("클랜 등급 변경");
-            listItems.add("클랜 추방");
+            if (ClanUsersItem.rank <= 2)
+                listItems.add("클랜 추방");
         }
-
 
 
         final CharSequence[] DialogFunctions = listItems.toArray(new CharSequence[listItems.size()]);
@@ -601,7 +602,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         BNetProtocol.sendChatCommand("/finger " + ItemUserName);
                         break;
                     case 2: {
-                        if (ClanRank >= 3 && ClanUsersItem.rank <= 2) {
+                        if (ClanRank >= 3 && ClanUsersItem.rank <= 3) {
                             ArrayList<String> listItems2 = new ArrayList<>();
                             AlertDialog.Builder Builder2 = new AlertDialog.Builder(ChatActivity.this);
                             Builder2.setTitle(ItemUserName);
@@ -797,17 +798,17 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             Toast.makeText(this, "메세지를 입력하세요.", Toast.LENGTH_SHORT).show();
             return;
         }
-        switch(chat_spinner.getSelectedItemPosition()) {
+        switch (chat_spinner.getSelectedItemPosition()) {
             case 0:
-                message = "/c m "+message;
+                message = "/c m " + message;
                 break;
             case 1:
-                message = "/f m "+message;
+                message = "/f m " + message;
                 break;
             case 2:
                 break;
             case 3:
-                message = "/"+message;
+                message = "/" + message;
                 chat_spinner.setSelection(2);
                 break;
         }
@@ -856,7 +857,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             if (activity != null) {
                 new CountDownTimer(30000, 1000) {
                     public void onTick(long sec) {
-                        activity.s_request_accept_btn.setText("수락 ("+ sec/1000 + ")");
+                        activity.s_request_accept_btn.setText("수락 (" + sec / 1000 + ")");
                     }
 
                     public void onFinish() {
