@@ -273,7 +273,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         if (ChatItems != null && ChatAdapter != null) {
                             switch (obj.eid) {
                                 case EID_TALK:
-                                case EID_WHISPER: {
+                                case EID_WHISPER:
+                                case EID_EMOTE: {
                                     String ALARM_TOGGLE = PreferencesControl.getInstance(ChatActivity.this).get(PreferencesControl.ALARM_DATA_PREF, PreferencesControl.ALARM_SET, null);
                                     Uri ALARM_SOUND = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + getPackageName() + "/" + R.raw.alarm);
                                     long [] ALARM_VIBRATE = {0, 100};
@@ -463,9 +464,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         listItems.add("추방 (/kick)");
         listItems.add("채널밴 (/ban)");
 
-        Log.e("ClanRank", String.valueOf(ClanRank));
+        Log.e("Clan", String.valueOf(ChanUsersItem.statstr.checkClan()));
 
-        if (ClanRank >= 3){
+        if (ClanRank >= 3 && ChanUsersItem.statstr.checkClan()){
             listItems.add("클랜 초대");
         }
 
@@ -492,7 +493,8 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         BNetProtocol.sendChatCommand("/ban " + ItemUserName);
                         break;
                     case 4:
-                        BNetProtocol.sendClanInvitation(ItemUserName);
+                        if (ClanRank >= 3 && ChanUsersItem.statstr.checkClan())
+                            BNetProtocol.sendClanInvitation(ItemUserName);
                         break;
                 }
             }
@@ -572,7 +574,16 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private void ClanUserSelectItem(int position) {
         final ClanMember ClanUsersItem = ClanMembers.get(position);
 
-        final CharSequence[] DialogFunctions = {"귓속말 (/w)", "정보 (/finger)"};
+        ArrayList<String> listItems = new ArrayList<>();
+        listItems.add("귓속말 (/w)");
+        listItems.add("정보 (/finger)");
+        if (ClanRank >= 3) {
+            listItems.add("클랜 등급 변경");
+            listItems.add("클랜 추방");
+        }
+
+        final CharSequence[] DialogFunctions = listItems.toArray(new CharSequence[listItems.size()]);
+
         AlertDialog.Builder Builder = new AlertDialog.Builder(this);
         final String ItemUserName = ClanUsersItem.username;
         Builder.setTitle(ItemUserName);
@@ -586,6 +597,13 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                         break;
                     case 1:
                         BNetProtocol.sendChatCommand("/finger " + ItemUserName);
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        if (ClanRank >= 3) {
+
+                        }
                         break;
                 }
             }

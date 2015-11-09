@@ -104,6 +104,12 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
                     mChatMessage.setText(bcm.message);
                     break;
                 }
+                case EID_EMOTE: {
+                    v = vi.inflate(R.layout.custom_chat_single, null);
+                    TextView mChatSingleRow = (TextView) v.findViewById(R.id.chat_single_row);
+                    mChatSingleRow.setTextColor(0xff808080);
+                    mChatSingleRow.setText(bcm.message);
+                }
                 default: {
                     v = vi.inflate(R.layout.custom_chat, null);
                     TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);

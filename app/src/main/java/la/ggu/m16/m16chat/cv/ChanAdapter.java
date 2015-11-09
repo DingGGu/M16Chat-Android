@@ -36,6 +36,11 @@ public class ChanAdapter extends ArrayAdapter<BNetChannelUser> {
         if (bcu != null) {
             TextView text1 = (TextView) v.findViewById(R.id.channel_user_list_item);
             text1.setText(ParseUsername.parseColor(bcu.username));
+            if (bcu.statstr.getClan() != null) {
+                TextView text2 = (TextView) v.findViewById(R.id.channel_user_list_clan);
+                text2.setTextColor(0xffe66100);
+                text2.setText(bcu.statstr.getClan());
+            }
         }
         return v;
     }
