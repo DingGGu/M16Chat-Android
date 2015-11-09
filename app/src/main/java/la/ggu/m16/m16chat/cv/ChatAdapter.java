@@ -86,7 +86,7 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
                 }
                 case EID_WHISPERSENT: {
                     v = vi.inflate(R.layout.custom_chat, null);
-                    v.setBackgroundColor(0xffFFE5F6);
+//                    v.setBackgroundColor(0xffFFE5F6);
                     TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);
                     TextView mChatMessage = (TextView) v.findViewById(R.id.chat_message);
                     mChatUserName.setTextColor(0xffFF34F1);
@@ -96,7 +96,7 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
                 }
                 case EID_WHISPER: {
                     v = vi.inflate(R.layout.custom_chat, null);
-                    v.setBackgroundColor(0xffFFE5F6);
+//                    v.setBackgroundColor(0xffFFE5F6);
                     TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);
                     TextView mChatMessage = (TextView) v.findViewById(R.id.chat_message);
                     mChatUserName.setTextColor(0xffFF34F1);
