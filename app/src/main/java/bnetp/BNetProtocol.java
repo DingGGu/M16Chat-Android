@@ -1,7 +1,5 @@
 package bnetp;
 
-import android.util.Log;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.*;
@@ -9,6 +7,7 @@ import java.util.Random;
 import java.util.TimeZone;
 
 import bnetp.Hash.*;
+import bnetp.clan.ClanInvitationResponse;
 import bnetp.clan.ClanMember;
 import bnetp.friend.FriendEntry;
 import bnetp.util.ByteArray;
@@ -458,6 +457,50 @@ public class BNetProtocol extends Thread implements Runnable {
                             this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
                         }
                     }
+                    break;
+                }
+
+                case SID_CLANRANKCHANGE: {
+                    int cookie = is.readDWord();
+                    int status = is.readByte();
+                    String result = null;
+                    /**
+                     * 0x00: Successfully changed rank
+                     * 0x01: Failed to change rank
+                     * 0x02: Cannot change user's rank yet
+                     * 0x07: Not authorized to change user rank
+                     * 0x08: Not allowed to change user rank
+                     **/
+
+                    switch (status) {
+                        case 0: {
+                            result = "성공적으로 변경했어요";
+                            break;
+                        }
+                        case 1: {
+                            result = "변경에 실패했어요";
+                            break;
+                        }
+                        case 2: {
+                            result = "잠시 후에 다시 시도해보세요";
+                            break;
+                        }
+                        case 7: {
+                            result = "등급 변경은 치프틴/샤먼만 가능해요";
+                            break;
+                        }
+                        case 8: {
+                            result = "잘못 된 시도에요";
+                            break;
+                        }
+                    }
+
+                    if (mBNetProtocolInterface != null) {
+                        mBNetChatMessage = new BNetChatMessage(BNetChatEventId.EID_INFO, null, result);
+                        this.mBNetProtocolInterface.receiveMessage(mBNetChatMessage);
+                    }
+
+                    break;
                 }
             }
         }
