@@ -798,6 +798,11 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
             Toast.makeText(this, "메세지를 입력하세요.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if (message.length() > 80) {
+            Toast.makeText(this, "메세지를 너무 길게 입력했어요. (" + message.length() + "/80)", Toast.LENGTH_SHORT).show();
+            return;
+        }
         switch (chat_spinner.getSelectedItemPosition()) {
             case 0:
                 message = "/c m " + message;
