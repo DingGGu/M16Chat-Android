@@ -26,11 +26,10 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
     }
 
     @Override
-    public View getView (int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         View v = convertView;
         BNetChatMessage bcm = ChatItems.get(position);
-        LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (bcm != null) {
             switch (bcm.eid) {
                 case EID_CHANNEL: {
@@ -38,7 +37,7 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
                     v.setBackgroundColor(0xfff4e4ce);
                     TextView mChatSingleRow = (TextView) v.findViewById(R.id.chat_single_row);
                     mChatSingleRow.setTextColor(0xff4C2001);
-                    mChatSingleRow.setText("채널 입장: "+bcm.message);
+                    mChatSingleRow.setText("채널 입장: " + bcm.message);
                     break;
                 }
                 case EID_JOIN: {
@@ -57,7 +56,7 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
                     mChatSingleRow.setText(ParseUsername.parseColor(bcm.username) + " 님이 퇴장하셨습니다.");
                     break;
                 }
-                case EID_ERROR:{
+                case EID_ERROR: {
                     v = vi.inflate(R.layout.custom_chat_single, null);
                     v.setBackgroundColor(0xffFFEEE5);
                     TextView mChatSingleRow = (TextView) v.findViewById(R.id.chat_single_row);
@@ -90,7 +89,7 @@ public class ChatAdapter extends ArrayAdapter<BNetChatMessage> {
                     TextView mChatUserName = (TextView) v.findViewById(R.id.chat_username);
                     TextView mChatMessage = (TextView) v.findViewById(R.id.chat_message);
                     mChatUserName.setTextColor(0xffFF34F1);
-                    mChatUserName.setText("[보냄] "+bcm.username);
+                    mChatUserName.setText("[보냄] " + bcm.username);
                     mChatMessage.setText(bcm.message);
                     break;
                 }

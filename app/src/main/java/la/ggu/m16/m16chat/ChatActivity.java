@@ -159,6 +159,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         chat_view = (ListView) findViewById(R.id.chat_view);
         ChatAdapter = new ChatAdapter(this, R.layout.custom_chat, ChatItems);
         chat_view.setAdapter(ChatAdapter);
+        chat_view.setOnItemClickListener(new ChatItemClickListener());
 
         accept_box_wrap = (FrameLayout) findViewById(R.id.accept_box_wrap);
         s_request_text = (TextView) findViewById(R.id.s_request_text);
@@ -449,6 +450,19 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
+    private class ChatItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            ChatItemSelectItem(position);
+        }
+    }
+
+    private void ChatItemSelectItem(int position) {
+        final BNetChatMessage ChatMessageItem = ChatItems.get(position);
+
+        Toast.makeText(this, ChatMessageItem.getTimestamp(), Toast.LENGTH_SHORT).show();
+    }
+
     private class ChanUserClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -464,8 +478,6 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         listItems.add("정보 (/finger)");
         listItems.add("추방 (/kick)");
         listItems.add("채널밴 (/ban)");
-
-        Log.e("Clan", String.valueOf(ChanUsersItem.statstr.checkClan()));
 
         if (ClanRank >= 3 && ChanUsersItem.statstr.checkClan()) {
             listItems.add("클랜 초대");
