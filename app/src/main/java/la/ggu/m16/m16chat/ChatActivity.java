@@ -35,6 +35,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,6 +116,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
     private Button chat_menu_tab_channel;
     private Button chat_menu_tab_friend;
     private Button chat_menu_tab_clan;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +125,9 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
 
         assert getSupportActionBar() != null;
         getSupportActionBar().setElevation(0);
+
+        App application = (App) getApplication();
+        mTracker = application.getDefaultTracker();
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -836,6 +843,11 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
         BNetChatMessage mBNetChatMessage = new BNetChatMessage(BNetChatEventId.EID_TALK, BNetProtocol.getUsername(), message);
         ChatItems.add(mBNetChatMessage);
         ChatAdapter.notifyDataSetChanged();
+
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("chatSendMessage")
+                .build());
     }
 
     @Override

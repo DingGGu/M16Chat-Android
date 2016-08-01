@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "315551558856",
+    "project_id": "m16-chat"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315551558856:android:5be73e0325318419",
+        "android_client_info": {
+          "package_name": "la.ggu.m16.m16chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvVN9S5EFX2vyXWlpcwT4PXJe97cMrsrc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-74413162-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
