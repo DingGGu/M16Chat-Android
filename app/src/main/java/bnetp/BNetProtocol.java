@@ -220,9 +220,10 @@ public class BNetProtocol extends Thread implements Runnable {
                             }
                             break;
                         case 0x06:
+                            String extra = is.readNTString();
                             disconnect();
                             if (mBNetProtocolInterface != null) {
-                                this.mBNetProtocolInterface.throwError("아이디가 잠겨있어요.");
+                                this.mBNetProtocolInterface.throwError("로그인 할 수 없습니다:\r\n" + extra);
                             }
                             break;
                         default:

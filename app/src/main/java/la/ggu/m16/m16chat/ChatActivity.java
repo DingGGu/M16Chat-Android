@@ -395,7 +395,7 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                 errorHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ChatActivity.this, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChatActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
                     }
                 });
                 super.handleMessage(msg);
