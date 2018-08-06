@@ -57,7 +57,7 @@ public class BNetProtocol extends Thread implements Runnable {
         if (mBNetProtocolInterface != null) {
             this.mBNetProtocolInterface.startChat();
         }
-        socket = makeSocket("chat.m16.online", 5004);
+        socket = makeSocket("chat.m16.me", 5004);
         BNInputStream = new BNetInputStream(socket.getInputStream());
         BNetOutputStream = new DataOutputStream(socket.getOutputStream());
 

@@ -8,12 +8,12 @@ android {
         applicationId "la.ggu.m16.m16chat"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 23
-        versionName "2.3"
+        versionCode 24
+        versionName "2.4"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

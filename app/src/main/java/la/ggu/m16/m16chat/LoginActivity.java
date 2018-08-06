@@ -26,7 +26,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
 
         TextView text_go_homepage = (TextView) findViewById(R.id.text_go_homepage);
-        text_go_homepage.setText(Html.fromHtml("<a href=\"https://m16.ggu.la\">M16 홈페이지</a> "));
+        text_go_homepage.setText(Html.fromHtml("<a href=\"https://m16.me\">M16 홈페이지</a> "));
         text_go_homepage.setMovementMethod(LinkMovementMethod.getInstance());
 
         login_username = (EditText) findViewById(R.id.login_username);
