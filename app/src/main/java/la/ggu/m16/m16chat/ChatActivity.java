@@ -17,7 +17,7 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -62,7 +62,7 @@ import la.ggu.m16.m16chat.cv.ClanMemberAdapter;
 import la.ggu.m16.m16chat.util.ParseUsername;
 import la.ggu.m16.m16chat.util.PreferencesControl;
 
-public class ChatActivity extends ActionBarActivity implements View.OnClickListener {
+public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DrawerLayout chat_activity;
     private RelativeLayout chat_drawer;
@@ -296,28 +296,19 @@ public class ChatActivity extends ActionBarActivity implements View.OnClickListe
                                         break;
                                     if (obj.message.toLowerCase().contains(uniqueUserName.toLowerCase())) { //알림
                                         PendingIntent pendingintent = PendingIntent.getActivity(ChatActivity.this, 0, new Intent(ChatActivity.this, ChatActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-                                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-                                            NotificationCompat.Builder mBuilder =
-                                                    new NotificationCompat.Builder(ChatActivity.this)
-                                                            .setSmallIcon(R.drawable.ic_m16_chat)
-                                                            .setTicker(obj.username + " 님이 언급했어요.")
-                                                            .setContentTitle(obj.username + " 님이 언급했어요.")
-                                                            .setContentText(obj.message)
-                                                            .setAutoCancel(true)
-                                                            .setDefaults(Notification.DEFAULT_LIGHTS)
-                                                            .setVibrate(ALARM_VIBRATE)
-                                                            .setSound(ALARM_SOUND)
-                                                            .setContentIntent(pendingintent);
-                                            mNotificationManager.notify(0, mBuilder.build());
-                                        } else {
-                                            Notification notification = new Notification(R.drawable.ic_m16_chat, obj.username + "님이 언급했어요.", System.currentTimeMillis());
-                                            notification.flags = Notification.FLAG_AUTO_CANCEL;
-                                            notification.defaults = Notification.DEFAULT_LIGHTS;
-                                            notification.sound = ALARM_SOUND;
-                                            notification.vibrate = ALARM_VIBRATE;
-                                            notification.setLatestEventInfo(ChatActivity.this, obj.username + "님이 언급했어요.", "", pendingintent);
-                                            mNotificationManager.notify(0, notification);
-                                        }
+                                        NotificationCompat.Builder mBuilder =
+                                                new NotificationCompat.Builder(ChatActivity.this, "M16Chat")
+                                                        .setSmallIcon(R.drawable.ic_m16_chat)
+                                                        .setTicker(obj.username + " 님이 언급했어요.")
+                                                        .setContentTitle(obj.username + " 님이 언급했어요.")
+                                                        .setContentText(obj.message)
+                                                        .setAutoCancel(true)
+                                                        .setDefaults(Notification.DEFAULT_LIGHTS)
+                                                        .setVibrate(ALARM_VIBRATE)
+                                                        .setSound(ALARM_SOUND)
+                                                        .setContentIntent(pendingintent);
+                                        mNotificationManager.notify(0, mBuilder.build());
+
                                     }
                                     break;
                                 }

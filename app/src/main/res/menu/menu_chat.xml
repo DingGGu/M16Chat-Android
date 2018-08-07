@@ -3,6 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context="la.ggu.m16.m16chat.ChatActivity">
     <item android:id="@+id/action_channel"
         android:title="Channel"
-        android:icon="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha"
+        android:icon="@drawable/abc_ic_menu_overflow_material"
         app:showAsAction="ifRoom" />
 </menu>
